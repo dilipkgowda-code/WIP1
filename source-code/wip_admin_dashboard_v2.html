@@ -1,0 +1,272 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:var(--font-sans);background:#F6F3EC;border-radius:16px;overflow:hidden;display:grid;grid-template-columns:215px 1fr;min-height:680px}
+[data-mode="dark"] .app{background:var(--surface-1)}
+
+.sidebar{background:#243530;padding:1.25rem 0.75rem;display:flex;flex-direction:column}
+.s-mark{display:flex;align-items:center;gap:9px;padding:0 0.5rem;margin-bottom:1.5rem}
+.s-glyph{width:28px;height:28px;border-radius:7px;background:#C46A3C;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s-glyph i{color:#243530;font-size:14px}
+.s-text{font-family:var(--font-voice);font-size:16px;color:#F6F3EC}
+
+.s-group-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#7E9088;padding:0 0.5rem;margin:14px 0 6px}
+.s-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;color:#B9C7C1;font-size:13px}
+.s-item i{font-size:16px;flex-shrink:0}
+.s-item:hover{background:rgba(255,255,255,0.06)}
+.s-item.on{background:rgba(196,106,60,0.2);color:#F6F3EC}
+.s-item.on i{color:#E08F5F}
+.s-badge{margin-left:auto;font-size:9px;background:#C46A3C;color:#243530;padding:1px 6px;border-radius:8px;font-weight:500}
+
+.s-foot{margin-top:auto;display:flex;align-items:center;gap:8px;padding:10px;border-top:0.5px solid rgba(255,255,255,0.1)}
+.s-av{width:28px;height:28px;border-radius:50%;background:#C46A3C;color:#243530;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.s-foot-name{font-size:12px;color:#F6F3EC}
+.s-foot-role{font-size:10px;color:#7E9088}
+
+.main{padding:0 1.5rem 2rem;overflow:hidden}
+
+.ticker-wrap{background:#243530;margin:0 -1.5rem 1rem;padding:7px 0;overflow:hidden;position:relative;display:flex;align-items:center}
+.ticker-label{flex-shrink:0;background:#C46A3C;color:#243530;font-size:10px;font-weight:500;padding:3px 12px;margin-left:1.5rem;border-radius:6px;display:flex;align-items:center;gap:5px;z-index:2}
+.ticker-track{overflow:hidden;flex:1;margin-left:10px}
+.ticker-content{display:inline-flex;white-space:nowrap;animation:scroll-left 32s linear infinite}
+.ticker-item{color:#E8E4D8;font-size:12px;padding:0 28px;display:inline-flex;align-items:center;gap:7px}
+.ticker-item i{color:#E08F5F;font-size:13px}
+@keyframes scroll-left{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-top:1.25rem}
+.tb-title{font-size:18px;font-weight:500;color:var(--text-primary)}
+.tb-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-search{height:34px;border-radius:8px;border:0.5px solid #DDD7C6;background:#FFFFFF;padding:0 10px;font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;width:190px}
+[data-mode="dark"] .tb-search{background:var(--surface-2);border-color:var(--border)}
+.tb-bell{width:34px;height:34px;border-radius:8px;border:0.5px solid #DDD7C6;display:flex;align-items:center;justify-content:center;color:#5A6478;position:relative;cursor:pointer}
+[data-mode="dark"] .tb-bell{border-color:var(--border);color:var(--text-secondary)}
+.tb-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:#C46A3C}
+
+.module-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.mod-card{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:14px 16px}
+[data-mode="dark"] .mod-card{background:var(--surface-2);border-color:var(--border)}
+.mod-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.mod-icn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+.mod-stat-row{display:flex;justify-content:space-between;margin-bottom:7px}
+.mod-stat-label{font-size:11px;color:var(--text-muted)}
+.mod-stat-val{font-size:12px;font-weight:500;color:var(--text-primary)}
+.mod-bar{height:5px;border-radius:3px;background:#EEEAE0;margin-top:8px}
+[data-mode="dark"] .mod-bar{background:var(--surface-1)}
+.mod-bar-fill{height:100%;border-radius:3px}
+.mod-foot{font-size:10px;color:var(--text-muted);margin-top:8px}
+
+.chart-row{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px}
+.panel{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:14px 16px}
+[data-mode="dark"] .panel{background:var(--surface-2);border-color:var(--border)}
+.panel-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.panel-link{font-size:11px;color:#C46A3C;cursor:pointer}
+
+.chart-box{position:relative;height:200px}
+.legend-row{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+
+.row-2{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-bottom:12px}
+.act-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:0.5px solid #EEEAE0}
+[data-mode="dark"] .act-item{border-color:var(--border)}
+.act-item:last-child{border-bottom:none}
+.act-icn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+.act-text{flex:1;font-size:12px;color:var(--text-primary)}
+.act-time{font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+.health-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.health-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.health-label{font-size:12px;color:var(--text-primary);flex:1}
+.health-val{font-size:11px;color:var(--text-muted)}
+
+.io-card{background:#FBEFE6;border:0.5px solid #E8C3A6;border-radius:12px;padding:14px 16px}
+[data-mode="dark"] .io-card{background:rgba(196,106,60,0.1);border-color:rgba(196,106,60,0.3)}
+.io-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.io-badge{font-size:9px;background:#C46A3C;color:#FFFFFF;padding:2px 7px;border-radius:7px;font-weight:500}
+.io-title{font-size:12px;font-weight:500;color:#8A4A26}
+[data-mode="dark"] .io-title{color:#E0AA5E}
+.io-text{font-size:11px;color:#8A4A26;line-height:1.55}
+[data-mode="dark"] .io-text{color:#D9B475}
+</style>
+
+<h2 class="sr-only">WIP admin dashboard in a forest green and sienna color scheme — scrolling flash news ticker at the top, three module summary cards, a pie chart of headcount by module, a bar chart of weekly engagement, recent activity feed, and system health panel</h2>
+
+<div class="app">
+
+  <div class="sidebar">
+    <div class="s-mark">
+      <div class="s-glyph"><i class="ti ti-brain" aria-hidden="true"></i></div>
+      <div class="s-text">WIP</div>
+    </div>
+
+    <div class="s-item on"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+
+    <div class="s-group-label">People and access</div>
+    <div class="s-item"><i class="ti ti-users-group" aria-hidden="true"></i>Roles and access</div>
+    <div class="s-item"><i class="ti ti-file-import" aria-hidden="true"></i>Data import</div>
+
+    <div class="s-group-label">Automation</div>
+    <div class="s-item"><i class="ti ti-calendar-bolt" aria-hidden="true"></i>AI scheduler</div>
+    <div class="s-item"><i class="ti ti-activity" aria-hidden="true"></i>AI tracker</div>
+
+    <div class="s-group-label">System</div>
+    <div class="s-item"><i class="ti ti-bell" aria-hidden="true"></i>Notifications<span class="s-badge">6</span></div>
+    <div class="s-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+
+    <div class="s-foot">
+      <div class="s-av">VP</div>
+      <div>
+        <div class="s-foot-name">Vinod P.</div>
+        <div class="s-foot-role">Platform admin</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="ticker-wrap">
+      <div class="ticker-label"><i class="ti ti-broadcast" style="font-size:11px" aria-hidden="true"></i>Flash</div>
+      <div class="ticker-track">
+        <div class="ticker-content">
+          <span class="ticker-item"><i class="ti ti-alert-triangle" aria-hidden="true"></i>7 candidates flagged at-risk on fit score for VP Engineering role</span>
+          <span class="ticker-item"><i class="ti ti-certificate" aria-hidden="true"></i>28 learners completed Leadership Essentials this week</span>
+          <span class="ticker-item"><i class="ti ti-trending-down" aria-hidden="true"></i>Psychological safety score dipped below threshold in Sales team</span>
+          <span class="ticker-item"><i class="ti ti-robot" aria-hidden="true"></i>AI scheduler auto-booked 9 interview slots today</span>
+          <span class="ticker-item"><i class="ti ti-file-check" aria-hidden="true"></i>142 employee records imported successfully</span>
+          <span class="ticker-item"><i class="ti ti-alert-triangle" aria-hidden="true"></i>7 candidates flagged at-risk on fit score for VP Engineering role</span>
+          <span class="ticker-item"><i class="ti ti-certificate" aria-hidden="true"></i>28 learners completed Leadership Essentials this week</span>
+          <span class="ticker-item"><i class="ti ti-trending-down" aria-hidden="true"></i>Psychological safety score dipped below threshold in Sales team</span>
+          <span class="ticker-item"><i class="ti ti-robot" aria-hidden="true"></i>AI scheduler auto-booked 9 interview slots today</span>
+          <span class="ticker-item"><i class="ti ti-file-check" aria-hidden="true"></i>142 employee records imported successfully</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Dashboard</div>
+        <div class="tb-sub">Tuesday, 30 June 2026 · all systems active</div>
+      </div>
+      <div class="tb-right">
+        <div class="tb-search"><i class="ti ti-search" style="font-size:13px" aria-hidden="true"></i>Search people, courses...</div>
+        <div class="tb-bell"><i class="ti ti-bell" style="font-size:15px" aria-hidden="true"></i><div class="tb-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="module-grid">
+      <div class="mod-card">
+        <div class="mod-head"><div class="mod-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-briefcase" style="font-size:13px" aria-hidden="true"></i></div><div class="mod-name">Recruitment assessment</div></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Open roles</span><span class="mod-stat-val">14</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Candidates in pipeline</span><span class="mod-stat-val">86</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Avg fit score</span><span class="mod-stat-val">74%</span></div>
+        <div class="mod-bar"><div class="mod-bar-fill" style="width:74%;background:#2E6B4F"></div></div>
+        <div class="mod-foot">5 offers pending acceptance</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-head"><div class="mod-icn" style="background:#FBEFE6;color:#C46A3C"><i class="ti ti-school" style="font-size:13px" aria-hidden="true"></i></div><div class="mod-name">Learning management</div></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Active learners</span><span class="mod-stat-val">347</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Avg completion</span><span class="mod-stat-val">68%</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Certs issued (mo)</span><span class="mod-stat-val">89</span></div>
+        <div class="mod-bar"><div class="mod-bar-fill" style="width:68%;background:#C46A3C"></div></div>
+        <div class="mod-foot">12 paths awaiting approval</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-head"><div class="mod-icn" style="background:#F0EDE0;color:#8A6F2E"><i class="ti ti-brain" style="font-size:13px" aria-hidden="true"></i></div><div class="mod-name">Behavioural assessment</div></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">360s in progress</span><span class="mod-stat-val">23</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">Avg competency score</span><span class="mod-stat-val">61%</span></div>
+        <div class="mod-stat-row"><span class="mod-stat-label">At-risk flags</span><span class="mod-stat-val">7</span></div>
+        <div class="mod-bar"><div class="mod-bar-fill" style="width:61%;background:#8A6F2E"></div></div>
+        <div class="mod-foot">Psychological safety trending down</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="panel">
+        <div class="panel-title">Weekly engagement across modules<span class="panel-link">Last 7 days</span></div>
+        <div class="chart-box"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Headcount by module</div>
+        <div class="chart-box"><canvas id="pieChart"></canvas></div>
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:#2E6B4F"></div>Recruitment</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#C46A3C"></div>Learning</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8A6F2E"></div>Behavioural</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="panel">
+        <div class="panel-title">Recent activity<span class="panel-link">View all</span></div>
+        <div class="act-item"><div class="act-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-user-plus" aria-hidden="true"></i></div><div class="act-text">14 candidates imported for Senior Manager - Ops</div><div class="act-time">12m ago</div></div>
+        <div class="act-item"><div class="act-icn" style="background:#FBEFE6;color:#C46A3C"><i class="ti ti-certificate" aria-hidden="true"></i></div><div class="act-text">28 learners completed Leadership Essentials path</div><div class="act-time">1h ago</div></div>
+        <div class="act-item"><div class="act-icn" style="background:#F0EDE0;color:#8A6F2E"><i class="ti ti-alert-triangle" aria-hidden="true"></i></div><div class="act-text">Sales team flagged for psychological safety dip</div><div class="act-time">3h ago</div></div>
+        <div class="act-item"><div class="act-icn" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-robot" aria-hidden="true"></i></div><div class="act-text">AI scheduler booked 9 interview slots automatically</div><div class="act-time">5h ago</div></div>
+        <div class="act-item"><div class="act-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-file-check" aria-hidden="true"></i></div><div class="act-text">Offer accepted - Priya Sharma, Team Lead HR</div><div class="act-time">1d ago</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">System health</div>
+        <div class="health-row"><div class="health-dot" style="background:#3B6D11"></div><div class="health-label">API uptime</div><div class="health-val">99.98%</div></div>
+        <div class="health-row"><div class="health-dot" style="background:#3B6D11"></div><div class="health-label">LRS sync</div><div class="health-val">Live</div></div>
+        <div class="health-row"><div class="health-dot" style="background:#BA7517"></div><div class="health-label">Nudge queue</div><div class="health-val">230 pending</div></div>
+        <div class="health-row"><div class="health-dot" style="background:#3B6D11"></div><div class="health-label">SSO provider</div><div class="health-val">Connected</div></div>
+        <div class="health-row"><div class="health-dot" style="background:#3B6D11"></div><div class="health-label">Storage used</div><div class="health-val">38% of 500GB</div></div>
+      </div>
+    </div>
+
+    <div class="io-card">
+      <div class="io-head"><span class="io-badge">IO insight</span><span class="io-title">Cross-module pattern detected</span></div>
+      <div class="io-text">Three new hires in Sales scored below 60% on psychological safety this month, and none have started their onboarding learning path yet. Recommend assigning the Psychological Safety micro-module before their 30-day check-in.</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const barCtx = document.getElementById('barChart').getContext('2d');
+new Chart(barCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [
+      { label: 'Recruitment', data: [12,18,14,20,16,6,4], backgroundColor: '#2E6B4F', borderRadius: 3 },
+      { label: 'Learning', data: [40,52,48,60,55,22,18], backgroundColor: '#C46A3C', borderRadius: 3 },
+      { label: 'Behavioural', data: [8,11,9,14,12,3,2], backgroundColor: '#8A6F2E', borderRadius: 3 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { stacked: false, grid: { display: false }, ticks: { font: { size: 10 }, color: '#8A8473' } },
+      y: { stacked: false, grid: { color: '#EEEAE0' }, ticks: { font: { size: 10 }, color: '#8A8473' } }
+    }
+  }
+});
+
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+new Chart(pieCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Recruitment', 'Learning', 'Behavioural'],
+    datasets: [{
+      data: [86, 347, 134],
+      backgroundColor: ['#2E6B4F', '#C46A3C', '#8A6F2E'],
+      borderWidth: 2,
+      borderColor: '#FFFFFF'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: { legend: { display: false } }
+  }
+});
+</script>
