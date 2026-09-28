@@ -55,16 +55,19 @@ Acceptance criteria:
 - Changes are saved persistently and the role list reflects them after reload.
 
 **WIP-004 · Hirer application portal and applicant workflow**  
-As a hirer, I want to publish a role-specific application portal and manage incoming applications, so that candidates can apply directly and my team can review them in one workspace.
+As a hirer, I want to publish roles to an application portal, find candidates using skill criteria, manage applications through interviews and results, and send candidates automatic updates, so that my team can run a transparent hiring process in one workspace.
 
 Acceptance criteria:
 - An authorized hirer can configure and publish an application page for an enabled role.
 - A candidate can view the role and submit the agreed profile/application fields through its shareable link.
 - The candidate receives confirmation that the application was received.
-- The hirer can view and search applications for authorized roles and update their workflow stage.
+- A hirer can search authorized applicant records by skills using agreed Boolean operators and see which criteria matched.
+- The hirer can track each application through agreed stages, schedule or update interviews, and record interview results.
+- Configured application and interview stage changes trigger an automatic candidate message using the approved channel and template.
+- Message delivery status and failures are visible to an authorized hirer.
 - Candidates cannot view other candidates’ private information.
 - Required data, retention/deletion rules, candidate consent wording, and who can see applicant records are agreed before implementation.
-- Job-board publishing integrations are not assumed in this item; evaluate them separately against pilot-customer needs.
+- External job-board publishing integrations are not assumed in this item; evaluate them separately against pilot-customer needs.
 
 **WIP-005 · Recruitment assessment**  
 As a hiring team member, I want role-relevant assessments and review evidence, so that decisions use consistent, job-related criteria.
@@ -216,11 +219,11 @@ A backlog item can be considered for Sprint 1 after the Product Owner and develo
 
 ## Sprint 1 direction (candidate; not yet committed)
 
-The Product Owner’s current direction is to focus Sprint 1 on a hirer application portal, including the candidate-facing application form and submission flow. WIP-003 (role administration) and WIP-004 (application portal and applicant workflow) are the likely backlog items to refine.
+The Product Owner’s current direction is to focus Sprint 1 on the hirer application portal, including job posting, candidate-facing application/submission, Boolean skill search, application tracking, interview scheduling, interview results, and automatic candidate messages. WIP-003 (role administration) and WIP-004 (application portal and applicant workflow) are the likely backlog items to refine.
 
-**Proposed Sprint Goal:** Let a hirer publish an enabled role for applications, let a candidate apply through its role-specific page and receive confirmation, and let the hirer review and update the resulting application.
+**Proposed Sprint Goal:** Let a hirer publish a role and manage an application through candidate notification, skill-based search, interview scheduling, and a recorded interview result.
 
-Refine the minimum role setup, application fields, applicant stages, candidate status visibility, persistence/security boundary, and verification method before Sprint Planning. This is a proposed goal, not a Sprint 1 plan or commitment.
+Refine the smallest end-to-end slice, role/application fields, Boolean search behavior, applicant stages, interview workflow, message channel/templates, persistence/security boundary, and verification method before Sprint Planning. This is a proposed goal, not a Sprint 1 plan or commitment.
 
 ## Source context
 
