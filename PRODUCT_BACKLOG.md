@@ -54,15 +54,17 @@ Acceptance criteria:
 - Hirers can search and filter roles by department, status, and relevant role details.
 - Changes are saved persistently and the role list reflects them after reload.
 
-**WIP-004 · Candidate application and hiring workflow**  
-As a candidate, I want to view an enabled role and submit an application, so that I can be considered for a suitable position.
+**WIP-004 · Hirer application portal and applicant workflow**  
+As a hirer, I want to publish a role-specific application portal and manage incoming applications, so that candidates can apply directly and my team can review them in one workspace.
 
 Acceptance criteria:
-- Candidates can view role details and submit the agreed profile/application fields.
-- The workflow confirms receipt and shows the candidate’s current application stage.
-- Hirers can find applications for their authorized roles and update the stage.
+- An authorized hirer can configure and publish an application page for an enabled role.
+- A candidate can view the role and submit the agreed profile/application fields through its shareable link.
+- The candidate receives confirmation that the application was received.
+- The hirer can view and search applications for authorized roles and update their workflow stage.
 - Candidates cannot view other candidates’ private information.
-- Required data, retention rules, and candidate consent wording are agreed before implementation.
+- Required data, retention/deletion rules, candidate consent wording, and who can see applicant records are agreed before implementation.
+- Job-board publishing integrations are not assumed in this item; evaluate them separately against pilot-customer needs.
 
 **WIP-005 · Recruitment assessment**  
 As a hiring team member, I want role-relevant assessments and review evidence, so that decisions use consistent, job-related criteria.
@@ -198,7 +200,7 @@ Acceptance criteria:
 Resolve these with the Product Owner before selecting Sprint 1 work:
 
 1. **First release audience:** Is fintech the first pilot customer, or only the example used for the prototype?
-2. **First end-to-end outcome:** Should the first usable release prove hiring assessment, new-hire onboarding, or one journey connecting hiring to learning?
+2. **Application portal boundary:** Does the first hirer portal include the candidate-facing apply page and status updates, or should Sprint 1 focus on hirer-side role/application management only?
 3. **Customer tenancy:** Does “dedicated secure domain” mean a customer-specific subdomain, customer-owned domain, isolated deployment, or a combination? Which are included in the premium tier?
 4. **First user roles:** Which roles must work in the first release, and who may see candidate results, learning records, and coaching feedback?
 5. **Assessment scope:** Which candidate and employee competencies or behavioral assessments are required first, and who authors/validates them?
@@ -211,6 +213,10 @@ Resolve these with the Product Owner before selecting Sprint 1 work:
 ## Ready for Sprint 1 checklist (proposed)
 
 A backlog item can be considered for Sprint 1 after the Product Owner and development team agree on its user outcome, acceptance criteria, dependencies, data/privacy implications, and how it will be verified. The Sprint Goal, selected items, and estimates will be recorded only after refinement.
+
+## Sprint 1 direction (candidate; not yet committed)
+
+The Product Owner’s current direction is to focus Sprint 1 on a hirer application portal. WIP-003 (role administration) and WIP-004 (application portal and applicant workflow) are the likely backlog items to refine. Confirm whether the candidate-facing application flow is included, define the smallest demonstrable end-to-end slice, and agree on the persistence/security boundary during refinement. Do not treat this section as a Sprint 1 plan or commitment.
 
 ## Source context
 
