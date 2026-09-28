@@ -200,7 +200,7 @@ Acceptance criteria:
 Resolve these with the Product Owner before selecting Sprint 1 work:
 
 1. **First release audience:** Is fintech the first pilot customer, or only the example used for the prototype?
-2. **Application portal boundary:** Does the first hirer portal include the candidate-facing apply page and status updates, or should Sprint 1 focus on hirer-side role/application management only?
+2. **Application portal detail:** Candidate-facing apply and submission are included. Refine the minimum application fields, applicant stages, candidate status visibility, and hirer review actions for the first slice.
 3. **Customer tenancy:** Does “dedicated secure domain” mean a customer-specific subdomain, customer-owned domain, isolated deployment, or a combination? Which are included in the premium tier?
 4. **First user roles:** Which roles must work in the first release, and who may see candidate results, learning records, and coaching feedback?
 5. **Assessment scope:** Which candidate and employee competencies or behavioral assessments are required first, and who authors/validates them?
@@ -216,7 +216,11 @@ A backlog item can be considered for Sprint 1 after the Product Owner and develo
 
 ## Sprint 1 direction (candidate; not yet committed)
 
-The Product Owner’s current direction is to focus Sprint 1 on a hirer application portal. WIP-003 (role administration) and WIP-004 (application portal and applicant workflow) are the likely backlog items to refine. Confirm whether the candidate-facing application flow is included, define the smallest demonstrable end-to-end slice, and agree on the persistence/security boundary during refinement. Do not treat this section as a Sprint 1 plan or commitment.
+The Product Owner’s current direction is to focus Sprint 1 on a hirer application portal, including the candidate-facing application form and submission flow. WIP-003 (role administration) and WIP-004 (application portal and applicant workflow) are the likely backlog items to refine.
+
+**Proposed Sprint Goal:** Let a hirer publish an enabled role for applications, let a candidate apply through its role-specific page and receive confirmation, and let the hirer review and update the resulting application.
+
+Refine the minimum role setup, application fields, applicant stages, candidate status visibility, persistence/security boundary, and verification method before Sprint Planning. This is a proposed goal, not a Sprint 1 plan or commitment.
 
 ## Source context
 
