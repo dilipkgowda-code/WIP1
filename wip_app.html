@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WIP · Product walkthrough</title>
+  <style>
+    :root{--ink:#26372d;--muted:#69786d;--green:#347b55;--green-soft:#e7f1e7;--amber:#a66d29;--line:#e2e9e1;--paper:#f7f9f5;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.shell{width:min(1120px,calc(100% - 36px));margin:auto}.top{display:flex;align-items:center;justify-content:space-between;padding:24px 0}.brand{display:flex;align-items:center;gap:10px;font-weight:800}.mark{display:grid;place-items:center;width:36px;height:36px;background:var(--green);color:white;border-radius:11px}.tag{color:var(--muted);font-size:12px}.hero{padding:48px 0 28px;max-width:700px}.eyebrow{color:var(--amber);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}.hero h1{font-size:clamp(32px,5vw,52px);letter-spacing:-.045em;line-height:1.06;margin:10px 0}.hero p{color:var(--muted);max-width:620px}.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0 48px}.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 8px 24px #243a2b08}.card .icon{width:42px;height:42px;display:grid;place-items:center;background:var(--green-soft);border-radius:12px;color:var(--green);font-size:20px}.card:nth-child(2) .icon{background:#fff1dc;color:var(--amber)}h2{font-size:19px;margin:16px 0 5px}.card p{font-size:13px;color:var(--muted);min-height:40px}.go{display:inline-flex;margin-top:12px;text-decoration:none;background:var(--green);color:white;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:700}.go:hover{background:#286443}.section-title{font-size:16px;margin:0 0 13px}.links{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 28px}.links a{border:1px solid var(--line);background:white;border-radius:8px;padding:9px 12px;text-decoration:none;color:#4a5c4e;font-size:12px}.links a:hover{border-color:#9eb9a1;color:var(--green)}.note{border-left:3px solid #dfb568;padding:10px 13px;background:#fffaf0;color:#76664d;font-size:12px;border-radius:0 8px 8px 0;margin:0 0 42px}footer{border-top:1px solid var(--line);padding:20px 0 32px;color:#849086;font-size:11px}
+    @media(max-width:740px){.roles{grid-template-columns:1fr}.hero{padding-top:30px}.card p{min-height:0}.tag{display:none}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><div class="brand"><span class="mark">W</span> WIP <span class="tag">· FINTECH PEOPLE WORKSPACE</span></div><span class="tag">Interactive product walkthrough</span></header>
+    <section class="hero"><div class="eyebrow">Choose a workspace</div><h1>One place to hire,<br>onboard and grow.</h1><p>Explore the working prototypes by role. This demo uses sample data in your browser; sign-in and server connections are not configured.</p></section>
+    <section class="roles" aria-label="Start a walkthrough">
+      <article class="card"><div class="icon" aria-hidden="true">▤</div><h2>Hirer / Admin</h2><p>Review fintech roles, search by department and manage enabled positions.</p><a class="go" href="wip_hiring_jobs.html">Open hiring workspace →</a></article>
+      <article class="card"><div class="icon" aria-hidden="true">✧</div><h2>Candidate / Learner</h2><p>See onboarding, assigned learning, progress, the resource library and learner Q&amp;A.</p><a class="go" href="wip_learning_portal.html?launch=candidate">Open learner dashboard →</a></article>
+      <article class="card"><div class="icon" aria-hidden="true">◇</div><h2>Assessor</h2><p>Review candidate content submissions and manage job-specific learning modules.</p><a class="go" href="wip_learning_portal.html?launch=assessor">Open assessor workspace →</a></article>
+    </section>
+    <section aria-labelledby="prototype-title"><h2 id="prototype-title" class="section-title">Other prototype screens</h2><nav class="links" aria-label="Other prototypes">
+      <a href="wip_login_web.html">Login concept</a><a href="WIP_Homepage_Prototype%20ChatGPT.html">Homepage</a><a href="wip_admin_dashboard_v2.html">Admin dashboard</a><a href="wip_recruiter_candidate_testing.html">Recruiter &amp; candidate testing</a><a href="wip_trainer_learner_pages.html">Trainer &amp; learner concepts</a>
+    </nav></section>
+    <p class="note"><strong>Prototype behavior:</strong> role selection opens the corresponding screen directly. The sample sign-in flow does not verify identity, and changes stored in the learning and hiring prototypes stay in this browser.</p>
+    <footer>WIP · Product concept preview</footer>
+  </main>
+</body>
+</html>
