@@ -1,0 +1,303 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.shell{font-family:var(--font-sans);background:#F6F3EC;border-radius:16px;overflow:hidden}
+[data-mode="dark"] .shell{background:var(--surface-1)}
+
+.switcher{display:flex;gap:6px;padding:14px 16px 0}
+.sw-btn{font-size:12px;padding:7px 14px;border-radius:8px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer;display:flex;align-items:center;gap:6px}
+[data-mode="dark"] .sw-btn{background:var(--surface-2);border-color:var(--border);color:var(--text-secondary)}
+.sw-btn.on{background:#243530;color:#F6F3EC;border-color:#243530}
+
+.view{display:none;padding:14px 16px 1.5rem}
+.view.on{display:block}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.tb-title{font-size:17px;font-weight:500;color:var(--text-primary)}
+.tb-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.tb-av{width:30px;height:30px;border-radius:50%;background:#C46A3C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+
+/* ====== RECRUITER VIEW ====== */
+.rec-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:12px}
+.panel{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:14px 16px}
+[data-mode="dark"] .panel{background:var(--surface-2);border-color:var(--border)}
+.panel-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.panel-link{font-size:11px;color:#C46A3C;cursor:pointer}
+
+.cand-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:0.5px solid #EEEAE0;cursor:pointer}
+[data-mode="dark"] .cand-row{border-color:var(--border)}
+.cand-row:last-child{border-bottom:none}
+.cand-row.sel{background:#FBEFE6;margin:0 -10px;padding:9px 10px;border-radius:8px;border-bottom-color:transparent}
+[data-mode="dark"] .cand-row.sel{background:rgba(196,106,60,0.12)}
+.cand-av{width:30px;height:30px;border-radius:50%;background:#E8F0EC;color:#2E6B4F;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.cand-info{flex:1;min-width:0}
+.cand-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.cand-role{font-size:11px;color:var(--text-muted)}
+.cand-status{font-size:9px;padding:2px 7px;border-radius:6px;white-space:nowrap}
+
+.module-section{margin-bottom:12px}
+.module-sub{font-size:11px;color:var(--text-muted);margin-bottom:8px}
+.test-card{display:flex;align-items:flex-start;gap:10px;padding:10px;border:0.5px solid #E5E0D2;border-radius:10px;margin-bottom:8px;cursor:pointer}
+[data-mode="dark"] .test-card{border-color:var(--border)}
+.test-card.checked{border-color:#C46A3C;background:#FBEFE6}
+[data-mode="dark"] .test-card.checked{background:rgba(196,106,60,0.1)}
+.test-chk{width:16px;height:16px;border-radius:4px;border:1.5px solid #C9C3B2;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.test-card.checked .test-chk{background:#C46A3C;border-color:#C46A3C}
+.test-card.checked .test-chk i{color:#fff;font-size:10px}
+.test-info{flex:1}
+.test-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.test-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+.assign-btn{width:100%;height:38px;border-radius:8px;border:none;background:#243530;color:#F6F3EC;font-size:12px;font-weight:500;cursor:pointer;margin-top:4px}
+.assign-btn i{margin-right:6px}
+
+.eval-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #EEEAE0}
+[data-mode="dark"] .eval-row{border-color:var(--border)}
+.eval-row:last-child{border-bottom:none}
+.eval-score{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.eval-info{flex:1}
+.eval-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.eval-test{font-size:11px;color:var(--text-muted)}
+.eval-actions{display:flex;gap:6px}
+.eval-btn{font-size:11px;padding:5px 10px;border-radius:7px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer}
+[data-mode="dark"] .eval-btn{background:var(--surface-1);border-color:var(--border);color:var(--text-secondary)}
+.eval-btn.pass{color:#2E6B4F;border-color:#A9CBB6}
+.eval-btn.fail{color:#A3372D;border-color:#E0B2AC}
+
+/* ====== CANDIDATE VIEW ====== */
+.cand-hero{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+[data-mode="dark"] .cand-hero{background:var(--surface-2);border-color:var(--border)}
+.hero-h{font-size:15px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+.hero-s{font-size:12px;color:var(--text-muted)}
+.hero-badge{background:#FBEFE6;color:#8A4A26;font-size:11px;padding:5px 12px;border-radius:8px;font-weight:500}
+
+.test-list-cand{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.tc-card{display:flex;align-items:center;gap:12px;background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:10px;padding:12px 14px}
+[data-mode="dark"] .tc-card{background:var(--surface-2);border-color:var(--border)}
+.tc-icn{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tc-info{flex:1}
+.tc-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.tc-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+.tc-status{font-size:9px;padding:3px 9px;border-radius:6px;font-weight:500}
+.tc-action{font-size:11px;padding:6px 14px;border-radius:7px;border:none;background:#243530;color:#F6F3EC;cursor:pointer}
+.tc-action.disabled{background:#EEEAE0;color:#A8A290;cursor:default}
+
+.quiz-card{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:18px 20px}
+[data-mode="dark"] .quiz-card{background:var(--surface-2);border-color:var(--border)}
+.quiz-progress{height:5px;background:#EEEAE0;border-radius:3px;margin-bottom:16px}
+.quiz-progress-fill{height:100%;width:40%;background:#C46A3C;border-radius:3px}
+.quiz-q-label{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.quiz-q{font-size:14px;color:var(--text-primary);margin-bottom:16px;line-height:1.5}
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid #E5E0D2;border-radius:9px;margin-bottom:8px;cursor:pointer}
+[data-mode="dark"] .quiz-opt{border-color:var(--border)}
+.quiz-opt.sel{border-color:#243530;background:#F6F3EC}
+[data-mode="dark"] .quiz-opt.sel{background:var(--surface-1)}
+.quiz-radio{width:16px;height:16px;border-radius:50%;border:1.5px solid #C9C3B2;flex-shrink:0}
+.quiz-opt.sel .quiz-radio{border-color:#243530;background:#243530;box-shadow:inset 0 0 0 3px #fff}
+.quiz-opt-text{font-size:12px;color:var(--text-primary)}
+.quiz-nav{display:flex;justify-content:space-between;margin-top:16px}
+.quiz-btn{font-size:12px;padding:8px 16px;border-radius:8px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer}
+[data-mode="dark"] .quiz-btn{background:var(--surface-1);border-color:var(--border);color:var(--text-secondary)}
+.quiz-btn.next{background:#243530;color:#F6F3EC;border-color:#243530}
+
+.notif-strip{background:#FBEFE6;border:0.5px solid #E8C3A6;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+[data-mode="dark"] .notif-strip{background:rgba(196,106,60,0.1);border-color:rgba(196,106,60,0.3)}
+.notif-icn{width:28px;height:28px;border-radius:8px;background:#C46A3C;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.notif-icn i{color:#fff;font-size:13px}
+.notif-text{font-size:12px;color:#8A4A26;line-height:1.5}
+[data-mode="dark"] .notif-text{color:#D9B475}
+
+.result-card{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:18px 20px;text-align:center}
+[data-mode="dark"] .result-card{background:var(--surface-2);border-color:var(--border)}
+.result-icn{width:54px;height:54px;border-radius:50%;background:#E8F0EC;color:#2E6B4F;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.result-h{font-size:15px;font-weight:500;color:var(--text-primary);margin-bottom:5px}
+.result-s{font-size:12px;color:var(--text-muted);max-width:300px;margin:0 auto}
+</style>
+
+<h2 class="sr-only">WIP recruitment testing workflow with two switchable views: a recruiter workspace for selecting test modules per candidate and evaluating results, and a candidate workspace for taking assigned tests and receiving screening notifications</h2>
+
+<div class="shell">
+
+  <div class="switcher">
+    <button class="sw-btn on" data-v="recruiter" onclick="showV('recruiter')"><i class="ti ti-briefcase" style="font-size:13px" aria-hidden="true"></i>Recruiter view</button>
+    <button class="sw-btn" data-v="candidate" onclick="showV('candidate')"><i class="ti ti-user" style="font-size:13px" aria-hidden="true"></i>Candidate view</button>
+  </div>
+
+  <div class="view on" id="v-recruiter">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Assessment pipeline</div>
+        <div class="tb-sub">VP Engineering · 14 candidates in screening</div>
+      </div>
+      <div class="tb-av">AR</div>
+    </div>
+
+    <div class="rec-layout">
+      <div class="panel">
+        <div class="panel-title">Candidates<span class="panel-link">86 total</span></div>
+        <div class="cand-row sel" onclick="selectCand(this)">
+          <div class="cand-av">RI</div>
+          <div class="cand-info"><div class="cand-name">Rohan Iyer</div><div class="cand-role">VP Engineering</div></div>
+          <span class="cand-status" style="background:#FAEEDA;color:#633806">Not assigned</span>
+        </div>
+        <div class="cand-row" onclick="selectCand(this)">
+          <div class="cand-av">SK</div>
+          <div class="cand-info"><div class="cand-name">Sneha Kulkarni</div><div class="cand-role">VP Engineering</div></div>
+          <span class="cand-status" style="background:#E6F1FB;color:#0C447C">In progress</span>
+        </div>
+        <div class="cand-row" onclick="selectCand(this)">
+          <div class="cand-av">AM</div>
+          <div class="cand-info"><div class="cand-name">Anil Menon</div><div class="cand-role">VP Engineering</div></div>
+          <span class="cand-status" style="background:#EAF3DE;color:#27500A">Completed</span>
+        </div>
+        <div class="cand-row" onclick="selectCand(this)">
+          <div class="cand-av">DP</div>
+          <div class="cand-info"><div class="cand-name">Divya Pillai</div><div class="cand-role">VP Engineering</div></div>
+          <span class="cand-status" style="background:#EAF3DE;color:#27500A">Completed</span>
+        </div>
+
+        <div class="panel-title" style="margin-top:18px">Pending evaluation</div>
+        <div class="eval-row">
+          <div class="eval-score" style="background:#E8F0EC;color:#2E6B4F">88</div>
+          <div class="eval-info"><div class="eval-name">Anil Menon</div><div class="eval-test">Psychometric + situational judgement</div></div>
+          <div class="eval-actions">
+            <button class="eval-btn pass" onclick="evaluate(this,'pass')"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i></button>
+            <button class="eval-btn fail" onclick="evaluate(this,'fail')"><i class="ti ti-x" style="font-size:11px" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="eval-row">
+          <div class="eval-score" style="background:#FAEEDA;color:#633806">54</div>
+          <div class="eval-info"><div class="eval-name">Divya Pillai</div><div class="eval-test">Psychometric + situational judgement</div></div>
+          <div class="eval-actions">
+            <button class="eval-btn pass" onclick="evaluate(this,'pass')"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i></button>
+            <button class="eval-btn fail" onclick="evaluate(this,'fail')"><i class="ti ti-x" style="font-size:11px" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Assign test modules<span class="panel-link" id="cand-target">Rohan Iyer</span></div>
+
+        <div class="module-section">
+          <div class="module-sub">Module 1 · Recruitment assessment</div>
+          <div class="test-card checked" onclick="toggleTest(this)">
+            <div class="test-chk"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="test-info"><div class="test-name">Psychometric battery</div><div class="test-meta">Big Five, cognitive style · 25 min</div></div>
+          </div>
+          <div class="test-card checked" onclick="toggleTest(this)">
+            <div class="test-chk"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="test-info"><div class="test-name">Situational judgement test</div><div class="test-meta">Role-specific scenarios · 20 min</div></div>
+          </div>
+          <div class="test-card" onclick="toggleTest(this)">
+            <div class="test-chk"></div>
+            <div class="test-info"><div class="test-name">Structured interview kit (BARS)</div><div class="test-meta">Interviewer-led, auto-scored · 45 min</div></div>
+          </div>
+          <div class="test-card" onclick="toggleTest(this)">
+            <div class="test-chk"></div>
+            <div class="test-info"><div class="test-name">Cognitive ability test</div><div class="test-meta">Numerical, verbal, logical · 30 min</div></div>
+          </div>
+          <div class="test-card" onclick="toggleTest(this)">
+            <div class="test-chk"></div>
+            <div class="test-info"><div class="test-name">Technical skills assessment</div><div class="test-meta">Role-configurable coding or domain test · 60 min</div></div>
+          </div>
+        </div>
+
+        <button class="assign-btn"><i class="ti ti-send" aria-hidden="true"></i>Assign 2 tests to Rohan Iyer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-candidate">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Your application</div>
+        <div class="tb-sub">VP Engineering · WIP client company</div>
+      </div>
+      <div class="tb-av">RI</div>
+    </div>
+
+    <div class="notif-strip">
+      <div class="notif-icn"><i class="ti ti-bell" aria-hidden="true"></i></div>
+      <div class="notif-text">The recruiter assigned 2 new assessments. Complete both within 5 days to stay in the process.</div>
+    </div>
+
+    <div class="cand-hero">
+      <div>
+        <div class="hero-h">Hello, Rohan</div>
+        <div class="hero-s">2 of 2 assigned assessments remaining</div>
+      </div>
+      <div class="hero-badge">Step 2 of 4</div>
+    </div>
+
+    <div class="test-list-cand">
+      <div class="tc-card">
+        <div class="tc-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-brain" style="font-size:16px" aria-hidden="true"></i></div>
+        <div class="tc-info"><div class="tc-name">Psychometric battery</div><div class="tc-meta">25 minutes · not started</div></div>
+        <span class="tc-status" style="background:#FAEEDA;color:#633806">Pending</span>
+        <button class="tc-action" onclick="startQuiz()">Start test</button>
+      </div>
+      <div class="tc-card">
+        <div class="tc-icn" style="background:#FBEFE6;color:#C46A3C"><i class="ti ti-target-arrow" style="font-size:16px" aria-hidden="true"></i></div>
+        <div class="tc-info"><div class="tc-name">Situational judgement test</div><div class="tc-meta">20 minutes · locked until first test is submitted</div></div>
+        <span class="tc-status" style="background:#F0EDE0;color:#5F5E5A">Locked</span>
+        <button class="tc-action disabled">Start test</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-area" style="display:none">
+      <div class="quiz-progress"><div class="quiz-progress-fill"></div></div>
+      <div class="quiz-q-label">Question 4 of 10 · psychometric battery</div>
+      <div class="quiz-q">When a project deadline is at risk, I typically...</div>
+      <div class="quiz-opt sel" onclick="selectOpt(this)"><div class="quiz-radio"></div><div class="quiz-opt-text">Reorganise priorities and communicate the new plan to the team immediately</div></div>
+      <div class="quiz-opt" onclick="selectOpt(this)"><div class="quiz-radio"></div><div class="quiz-opt-text">Push the team to work longer hours to recover the timeline</div></div>
+      <div class="quiz-opt" onclick="selectOpt(this)"><div class="quiz-radio"></div><div class="quiz-opt-text">Escalate to my manager and wait for direction</div></div>
+      <div class="quiz-opt" onclick="selectOpt(this)"><div class="quiz-radio"></div><div class="quiz-opt-text">Quietly absorb the extra work myself to protect the team</div></div>
+      <div class="quiz-nav">
+        <button class="quiz-btn">Back</button>
+        <button class="quiz-btn next">Next question</button>
+      </div>
+    </div>
+
+    <div class="result-card" id="result-area" style="display:none">
+      <div class="result-icn"><i class="ti ti-check" style="font-size:24px" aria-hidden="true"></i></div>
+      <div class="result-h">Assessment submitted</div>
+      <div class="result-s">Your responses have been sent to the recruiter for review. You'll be notified here as soon as screening is complete.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showV(key){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v-'+key).classList.add('on');
+  document.querySelector('[data-v="'+key+'"]').classList.add('on');
+}
+function selectCand(el){
+  document.querySelectorAll('.cand-row').forEach(r=>r.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cand-target').textContent = el.querySelector('.cand-name').textContent;
+}
+function toggleTest(el){
+  el.classList.toggle('checked');
+  const chk = el.querySelector('.test-chk');
+  chk.innerHTML = el.classList.contains('checked') ? '<i class="ti ti-check" aria-hidden="true"></i>' : '';
+  const count = document.querySelectorAll('.test-card.checked').length;
+  const name = document.getElementById('cand-target').textContent;
+  document.querySelector('.assign-btn').innerHTML = '<i class="ti ti-send" aria-hidden="true"></i>Assign ' + count + ' test' + (count===1?'':'s') + ' to ' + name;
+}
+function evaluate(el, type){
+  const row = el.closest('.eval-row');
+  row.style.opacity = '0.4';
+  row.style.pointerEvents = 'none';
+}
+function startQuiz(){
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('quiz-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function selectOpt(el){
+  document.querySelectorAll('.quiz-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+</script>

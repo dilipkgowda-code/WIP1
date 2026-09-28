@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WIP – Homepage Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#f6f8fb;color:#1f2937}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 8%;background:#fff;position:sticky;top:0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.logo{font-size:30px;font-weight:800;color:#12355B}
+.logo span{color:#2E8B57}
+nav a{margin:0 14px;text-decoration:none;color:#333}
+.hero{background:linear-gradient(135deg,#0d2340,#153b67);color:#fff;padding:90px 8%;display:flex;justify-content:space-between;align-items:center}
+.hero .left{max-width:650px}
+.hero h1{font-size:60px;line-height:1.1;margin-bottom:20px}
+.hero h1 span{color:#55c271}
+.hero p{font-size:20px;line-height:1.6;opacity:.9}
+.btns{margin-top:35px}
+.btn{display:inline-block;padding:15px 30px;border-radius:10px;text-decoration:none;font-weight:700;margin-right:15px}
+.primary{background:#2E8B57;color:#fff}
+.secondary{border:2px solid #fff;color:#fff}
+.heroimg{width:360px;height:360px;border-radius:24px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:120px}
+section{padding:70px 8%}
+h2{text-align:center;font-size:42px;margin-bottom:40px;color:#12355B}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px}
+.card{background:#fff;border-radius:18px;padding:30px;box-shadow:0 8px 25px rgba(0,0,0,.08);transition:.3s}
+.card:hover{transform:translateY(-8px)}
+.card h3{margin-bottom:15px;color:#12355B}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}
+.pillar{background:#12355B;color:#fff;padding:35px;border-radius:18px}
+.founder{display:flex;gap:40px;align-items:center;background:#fff;border-radius:20px;padding:40px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+.avatar{width:180px;height:180px;border-radius:50%;background:#12355B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:64px}
+footer{background:#0d2340;color:#fff;padding:50px 8%;margin-top:60px}
+@media(max-width:900px){
+.hero{flex-direction:column;text-align:center}
+.heroimg{margin-top:40px}
+.pillars{grid-template-columns:1fr}
+.founder{flex-direction:column;text-align:center}
+.hero h1{font-size:42px}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">LEAP<span>ONE</span></div>
+<nav>
+<a href="#">Insights</a>
+<a href="#">Academy</a>
+<a href="#">Advisory</a>
+<a href="#">Assessments</a>
+<a href="#">Analytics</a>
+<a href="#">Community</a>
+</nav>
+</header>
+
+<section class="hero">
+<div class="left">
+<h1>Empowering People.<br><span>Transforming Organizations.</span></h1>
+<p>WIP is a knowledge and transformation platform helping individuals and organizations grow through leadership, organizational psychology, workforce intelligence, research, and continuous learning.</p>
+<div class="btns">
+<a class="btn primary" href="#">Explore Platform</a>
+<a class="btn secondary" href="#">Read Insights</a>
+</div>
+</div>
+<div class="heroimg">▲</div>
+</section>
+
+<section>
+<h2>Choose Your Journey</h2>
+<div class="grid">
+<div class="card"><h3>🧠 Insights</h3><p>Leadership, research, psychology, AI and current affairs.</p></div>
+<div class="card"><h3>🎓 Academy</h3><p>Courses, workshops and certifications.</p></div>
+<div class="card"><h3>🏢 Advisory</h3><p>Leadership, OD and HR transformation consulting.</p></div>
+<div class="card"><h3>📊 Analytics</h3><p>AI-powered workforce intelligence and dashboards.</p></div>
+<div class="card"><h3>🧪 Assessments</h3><p>Psychometrics, career guidance and leadership assessments.</p></div>
+<div class="card"><h3>🤝 Community</h3><p>Events, networking and knowledge sharing.</p></div>
+</div>
+</section>
+
+<section>
+<h2>Our Three Pillars</h2>
+<div class="pillars">
+<div class="pillar"><h3>Evidence</h3><p>Research-backed thinking and practical frameworks.</p></div>
+<div class="pillar"><h3>Experience</h3><p>Military leadership, psychology and operations excellence.</p></div>
+<div class="pillar"><h3>Execution</h3><p>Turning ideas into measurable organizational outcomes.</p></div>
+</div>
+</section>
+
+<section>
+<div class="founder">
+<div class="avatar">DG</div>
+<div>
+<h2 style="text-align:left;margin:0 0 10px;">Meet the Founder</h2>
+<h3>Dilip Gowda</h3>
+<p>Air Force Veteran • Organizational Psychologist • Operations Leader</p>
+<p style="margin-top:15px;">WIP is built to bridge knowledge, leadership and technology, helping individuals and organizations achieve sustainable transformation.</p>
+</div>
+</div>
+</section>
+
+<footer>
+<h2 style="color:white;text-align:left;margin-bottom:10px;">WIP</h2>
+<p>Empowering People. Transforming Organizations.</p>
+</footer>
+</body>
+</html>

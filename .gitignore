@@ -1,0 +1,18 @@
+# Keep product planning documents and binary design assets out of the code repository.
+*.docx
+*.pptx
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# Local tooling output and environment files.
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+build/

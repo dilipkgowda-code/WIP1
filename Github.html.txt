@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Workforce Intelligence</title></head>
+  <body>
+    <main><h1>Workforce review</h1><p id="message" role="status"></p><section id="records" aria-label="Workforce records"></section></main>
+    <script>
+      const token = "demo-manager-token";
+      const records = document.querySelector("#records");
+      const message = document.querySelector("#message");
+      async function load() {
+        const response = await fetch("http://localhost:3000/api/workforce-records", { headers: { authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error("Unable to load workforce records.");
+        records.replaceChildren(...(await response.json()).records.map(render));
+      }
+      function render(record) {
+        const element = document.createElement("article");
+        element.innerHTML = `<h2>${record.name}</h2><p>Current status: <strong>${record.status}</strong></p>`;
+        for (const status of ["needs-review", "on-track", "blocked"]) {
+          const button = document.createElement("button");
+          button.textContent = `Set ${status}`;
+          button.onclick = () => update(record.id, status);
+          element.append(button);
+        }
+        return element;
+      }
+      async function update(id, status) {
+        message.textContent = "Saving…";
+        const response = await fetch(`http://localhost:3000/api/workforce-records/${id}`, { method: "PATCH", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ status }) });
+        message.textContent = response.ok ? "Saved." : "Unable to save the status.";
+        if (response.ok) await load();
+      }
+      load().catch((error) => { message.textContent = error.message; });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,297 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.shell{font-family:var(--font-sans);background:#F6F3EC;border-radius:16px;overflow:hidden}
+[data-mode="dark"] .shell{background:var(--surface-1)}
+
+.switcher{display:flex;gap:6px;padding:14px 16px 0}
+.sw-btn{font-size:12px;padding:7px 14px;border-radius:8px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer;display:flex;align-items:center;gap:6px}
+[data-mode="dark"] .sw-btn{background:var(--surface-2);border-color:var(--border);color:var(--text-secondary)}
+.sw-btn.on{background:#243530;color:#F6F3EC;border-color:#243530}
+
+.view{display:none;padding:14px 16px 1.5rem}
+.view.on{display:block}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.tb-title{font-size:17px;font-weight:500;color:var(--text-primary)}
+.tb-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.tb-av{width:30px;height:30px;border-radius:50%;background:#C46A3C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+
+.tabs-2{display:flex;gap:6px;margin-bottom:12px}
+.t2{font-size:12px;padding:6px 12px;border-radius:8px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer}
+[data-mode="dark"] .t2{background:var(--surface-2);border-color:var(--border);color:var(--text-secondary)}
+.t2.on{background:#FBEFE6;color:#8A4A26;border-color:#E8C3A6}
+
+.panel{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:14px 16px}
+[data-mode="dark"] .panel{background:var(--surface-2);border-color:var(--border)}
+.panel-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.panel-link{font-size:11px;color:#C46A3C;cursor:pointer}
+
+/* ===== TRAINER ===== */
+.t-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.t-stat{background:var(--surface-1);border-radius:10px;padding:11px}
+.t-stat-lbl{font-size:10px;color:var(--text-muted);margin-bottom:4px}
+.t-stat-val{font-size:18px;font-weight:500;color:var(--text-primary)}
+
+.t-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px}
+
+.cohort-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid #EEEAE0}
+[data-mode="dark"] .cohort-row{border-color:var(--border)}
+.cohort-row:last-child{border-bottom:none}
+.cohort-av{width:28px;height:28px;border-radius:50%;background:#E8F0EC;color:#2E6B4F;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.cohort-info{flex:1;min-width:0}
+.cohort-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.cohort-course{font-size:11px;color:var(--text-muted)}
+.cohort-bar-wrap{width:70px;flex-shrink:0}
+.cohort-bar{height:5px;border-radius:3px;background:#EEEAE0}
+.cohort-bar-fill{height:100%;border-radius:3px;background:#C46A3C}
+.cohort-pct{font-size:10px;color:var(--text-muted);text-align:right;margin-top:2px}
+.cohort-status{font-size:9px;padding:2px 7px;border-radius:6px;white-space:nowrap}
+
+.assign-form{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.af-row{display:flex;gap:8px}
+.af-select{flex:1;height:34px;border-radius:8px;border:0.5px solid #DAD5C7;background:#FBFAF6;padding:0 10px;font-size:12px;color:var(--text-primary)}
+[data-mode="dark"] .af-select{background:var(--surface-1);border-color:var(--border);color:var(--text-primary)}
+.af-btn{height:34px;padding:0 16px;border-radius:8px;border:none;background:#243530;color:#F6F3EC;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
+
+.task-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:0.5px solid #EEEAE0}
+[data-mode="dark"] .task-row{border-color:var(--border)}
+.task-row:last-child{border-bottom:none}
+.task-icn{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.task-info{flex:1}
+.task-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.task-meta{font-size:11px;color:var(--text-muted)}
+.task-badge{font-size:9px;padding:2px 8px;border-radius:6px;white-space:nowrap}
+
+.eval-table{width:100%;border-collapse:collapse}
+.eval-table th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);text-align:left;padding:0 0 8px;font-weight:400}
+.eval-table td{font-size:12px;color:var(--text-primary);padding:8px 0;border-top:0.5px solid #EEEAE0}
+[data-mode="dark"] .eval-table td{border-color:var(--border)}
+.score-pill{font-size:11px;font-weight:500;padding:2px 9px;border-radius:7px}
+.eval-actions-cell{display:flex;gap:5px}
+.mini-btn{font-size:10px;padding:4px 9px;border-radius:6px;border:0.5px solid #DDD7C6;background:#FFFFFF;color:#5A6478;cursor:pointer}
+[data-mode="dark"] .mini-btn{background:var(--surface-1);border-color:var(--border);color:var(--text-secondary)}
+
+/* ===== LEARNER ===== */
+.l-hero{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+[data-mode="dark"] .l-hero{background:var(--surface-2);border-color:var(--border)}
+.hero-h{font-size:15px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+.hero-s{font-size:12px;color:var(--text-muted)}
+.hero-badge{background:#FBEFE6;color:#8A4A26;font-size:11px;padding:5px 12px;border-radius:8px;font-weight:500}
+
+.course-card{background:#FFFFFF;border:0.5px solid #E5E0D2;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+[data-mode="dark"] .course-card{background:var(--surface-2);border-color:var(--border)}
+.course-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.course-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+.course-due{font-size:11px;color:#A3372D}
+.course-due.ok{color:var(--text-muted)}
+.course-bar{height:6px;border-radius:3px;background:#EEEAE0;margin-bottom:6px}
+.course-bar-fill{height:100%;border-radius:3px;background:#C46A3C}
+.course-meta-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}
+
+.module-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.mod-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;background:var(--surface-1)}
+.mod-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-check.done{background:#2E6B4F;color:#fff}
+.mod-check.current{background:#C46A3C;color:#fff}
+.mod-check.locked{background:#EEEAE0;color:#A8A290}
+.mod-check i{font-size:10px}
+.mod-name{flex:1;font-size:12px;color:var(--text-primary)}
+.mod-type{font-size:10px;color:var(--text-muted)}
+
+.exam-strip{background:#FBEFE6;border:0.5px solid #E8C3A6;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+[data-mode="dark"] .exam-strip{background:rgba(196,106,60,0.1);border-color:rgba(196,106,60,0.3)}
+.exam-icn{width:28px;height:28px;border-radius:8px;background:#C46A3C;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.exam-icn i{color:#fff;font-size:13px}
+.exam-text{flex:1;font-size:12px;color:#8A4A26;line-height:1.5}
+[data-mode="dark"] .exam-text{color:#D9B475}
+.exam-btn{font-size:11px;padding:6px 13px;border-radius:7px;border:none;background:#243530;color:#fff;cursor:pointer;white-space:nowrap}
+
+.upload-box{border:1px dashed #C9C3B2;border-radius:10px;padding:18px;text-align:center;margin-top:10px}
+[data-mode="dark"] .upload-box{border-color:var(--border-strong)}
+.upload-icn{width:34px;height:34px;border-radius:9px;background:#E8F0EC;color:#2E6B4F;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.upload-title{font-size:12px;font-weight:500;color:var(--text-primary)}
+.upload-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+</style>
+
+<h2 class="sr-only">WIP learning module pages with two switchable views: a trainer workspace for assigning courses, tracking cohort progress, managing tasks and tests, and evaluating submissions, and an employee workspace for viewing assigned courses, completing modules on a timeline, submitting assignments, and taking exams</h2>
+
+<div class="shell">
+
+  <div class="switcher">
+    <button class="sw-btn on" data-v="trainer" onclick="showV('trainer')"><i class="ti ti-chalkboard" style="font-size:13px" aria-hidden="true"></i>Trainer view</button>
+    <button class="sw-btn" data-v="learner" onclick="showV('learner')"><i class="ti ti-school" style="font-size:13px" aria-hidden="true"></i>Employee view</button>
+  </div>
+
+  <div class="view on" id="v-trainer">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Course management</div>
+        <div class="tb-sub">4 active cohorts · 347 learners</div>
+      </div>
+      <div class="tb-av">PS</div>
+    </div>
+
+    <div class="t-stat-grid">
+      <div class="t-stat"><div class="t-stat-lbl">Active courses</div><div class="t-stat-val">9</div></div>
+      <div class="t-stat"><div class="t-stat-lbl">Avg completion</div><div class="t-stat-val">68%</div></div>
+      <div class="t-stat"><div class="t-stat-lbl">Pending grading</div><div class="t-stat-val">23</div></div>
+      <div class="t-stat"><div class="t-stat-lbl">Overdue learners</div><div class="t-stat-val">14</div></div>
+    </div>
+
+    <div class="tabs-2">
+      <button class="t2 on" data-t="progress" onclick="tTab('progress')">Progress tracking</button>
+      <button class="t2" data-t="assign" onclick="tTab('assign')">Assign course</button>
+      <button class="t2" data-t="tasks" onclick="tTab('tasks')">Tasks and tests</button>
+      <button class="t2" data-t="eval" onclick="tTab('eval')">Evaluation queue</button>
+    </div>
+
+    <div class="t-content" id="tc-progress">
+      <div class="panel">
+        <div class="panel-title">Learner progress · Leadership Essentials<span class="panel-link">View all cohorts</span></div>
+        <div class="cohort-row">
+          <div class="cohort-av">AR</div>
+          <div class="cohort-info"><div class="cohort-name">Arjun Rao</div><div class="cohort-course">Module 4 of 6</div></div>
+          <div class="cohort-bar-wrap"><div class="cohort-bar"><div class="cohort-bar-fill" style="width:74%"></div></div><div class="cohort-pct">74%</div></div>
+          <span class="cohort-status" style="background:#EAF3DE;color:#27500A">On track</span>
+        </div>
+        <div class="cohort-row">
+          <div class="cohort-av">SK</div>
+          <div class="cohort-info"><div class="cohort-name">Sneha Kulkarni</div><div class="cohort-course">Module 2 of 6</div></div>
+          <div class="cohort-bar-wrap"><div class="cohort-bar"><div class="cohort-bar-fill" style="width:32%"></div></div><div class="cohort-pct">32%</div></div>
+          <span class="cohort-status" style="background:#FAEEDA;color:#633806">At risk</span>
+        </div>
+        <div class="cohort-row">
+          <div class="cohort-av">KM</div>
+          <div class="cohort-info"><div class="cohort-name">Kiran Mehta</div><div class="cohort-course">Module 6 of 6</div></div>
+          <div class="cohort-bar-wrap"><div class="cohort-bar"><div class="cohort-bar-fill" style="width:100%"></div></div><div class="cohort-pct">100%</div></div>
+          <span class="cohort-status" style="background:#EAF3DE;color:#27500A">Completed</span>
+        </div>
+        <div class="cohort-row">
+          <div class="cohort-av">VN</div>
+          <div class="cohort-info"><div class="cohort-name">Vandana Nair</div><div class="cohort-course">Module 1 of 6</div></div>
+          <div class="cohort-bar-wrap"><div class="cohort-bar"><div class="cohort-bar-fill" style="width:12%"></div></div><div class="cohort-pct">12%</div></div>
+          <span class="cohort-status" style="background:#FAECE7;color:#712B13">Behind</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-content" id="tc-assign" style="display:none">
+      <div class="panel">
+        <div class="panel-title">Assign a course</div>
+        <div class="assign-form">
+          <div class="af-row">
+            <select class="af-select"><option>Select course</option><option selected>Leadership Essentials</option><option>Emotional Intelligence</option><option>Conflict Resolution</option></select>
+            <select class="af-select"><option>Select cohort or individual</option><option selected>Sales team (24)</option><option>New hires - Q2 2026 (6)</option><option>Individual learner</option></select>
+          </div>
+          <div class="af-row">
+            <select class="af-select"><option>Due date</option><option selected>30 days from assignment</option><option>60 days</option><option>Custom date</option></select>
+            <button class="af-btn"><i class="ti ti-send" style="font-size:12px" aria-hidden="true"></i> Assign course</button>
+          </div>
+        </div>
+        <div class="panel-title" style="margin-top:4px">Recently assigned</div>
+        <div class="task-row"><div class="task-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-school" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Conflict Resolution → Sales team</div><div class="task-meta">Assigned 2 days ago · 24 learners</div></div><span class="task-badge" style="background:#E6F1FB;color:#0C447C">Active</span></div>
+        <div class="task-row"><div class="task-icn" style="background:#FBEFE6;color:#C46A3C"><i class="ti ti-school" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Onboarding Essentials → New hires Q2</div><div class="task-meta">Assigned 5 days ago · 6 learners</div></div><span class="task-badge" style="background:#E6F1FB;color:#0C447C">Active</span></div>
+      </div>
+    </div>
+
+    <div class="t-content" id="tc-tasks" style="display:none">
+      <div class="panel">
+        <div class="panel-title">Tasks and tests · Leadership Essentials</div>
+        <div class="task-row"><div class="task-icn" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-file-text" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Reflection assignment - Module 3</div><div class="task-meta">Written submission · due in 4 days</div></div><span class="task-badge" style="background:#E6F1FB;color:#0C447C">18 submitted</span></div>
+        <div class="task-row"><div class="task-icn" style="background:#FAEEDA;color:#633806"><i class="ti ti-clipboard-check" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Mid-course quiz</div><div class="task-meta">12 questions, auto-graded · 70% pass mark</div></div><span class="task-badge" style="background:#EAF3DE;color:#27500A">32 completed</span></div>
+        <div class="task-row"><div class="task-icn" style="background:#FAECE7;color:#712B13"><i class="ti ti-certificate" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Final certification exam</div><div class="task-meta">Proctored, 45 min · unlocks after module 6</div></div><span class="task-badge" style="background:#F0EDE0;color:#5F5E5A">Not yet open</span></div>
+        <div class="task-row"><div class="task-icn" style="background:#E8F0EC;color:#2E6B4F"><i class="ti ti-message-2" aria-hidden="true"></i></div><div class="task-info"><div class="task-name">Peer discussion - case study debrief</div><div class="task-meta">Optional, contributes to engagement score</div></div><span class="task-badge" style="background:#EAF3DE;color:#27500A">26 participated</span></div>
+        <button class="af-btn" style="margin-top:6px"><i class="ti ti-plus" style="font-size:12px" aria-hidden="true"></i> Add task or test</button>
+      </div>
+    </div>
+
+    <div class="t-content" id="tc-eval" style="display:none">
+      <div class="panel">
+        <div class="panel-title">Evaluation queue<span class="panel-link">23 pending</span></div>
+        <table class="eval-table">
+          <tr><th>Learner</th><th>Item</th><th>Score</th><th>Status</th><th></th></tr>
+          <tr><td>Arjun Rao</td><td>Reflection - Module 3</td><td><span class="score-pill" style="background:#E8F0EC;color:#27500A">Ungraded</span></td><td>Submitted 1d ago</td><td class="eval-actions-cell"><button class="mini-btn">Review</button></td></tr>
+          <tr><td>Sneha Kulkarni</td><td>Mid-course quiz</td><td><span class="score-pill" style="background:#E8F0EC;color:#27500A">82%</span></td><td>Auto-graded</td><td class="eval-actions-cell"><button class="mini-btn">View</button></td></tr>
+          <tr><td>Kiran Mehta</td><td>Final certification exam</td><td><span class="score-pill" style="background:#FAEEDA;color:#633806">61%</span></td><td>Needs review</td><td class="eval-actions-cell"><button class="mini-btn">Review</button></td></tr>
+          <tr><td>Vandana Nair</td><td>Reflection - Module 1</td><td><span class="score-pill" style="background:#E8F0EC;color:#27500A">Ungraded</span></td><td>Submitted 3d ago</td><td class="eval-actions-cell"><button class="mini-btn">Review</button></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-learner">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Your learning</div>
+        <div class="tb-sub">Sales associate · 2 active courses</div>
+      </div>
+      <div class="tb-av">SK</div>
+    </div>
+
+    <div class="exam-strip">
+      <div class="exam-icn"><i class="ti ti-bell" aria-hidden="true"></i></div>
+      <div class="exam-text">Your mid-course quiz for Leadership Essentials is due in 4 days. You're currently at module 4 of 6.</div>
+      <button class="exam-btn">Resume course</button>
+    </div>
+
+    <div class="l-hero">
+      <div>
+        <div class="hero-h">Hello, Sneha</div>
+        <div class="hero-s">Keep going — you're 32% through this week's path</div>
+      </div>
+      <div class="hero-badge">3 day streak</div>
+    </div>
+
+    <div class="course-card">
+      <div class="course-head">
+        <div class="course-name">Leadership Essentials</div>
+        <div class="course-due">Due in 4 days</div>
+      </div>
+      <div class="course-bar"><div class="course-bar-fill" style="width:32%"></div></div>
+      <div class="course-meta-row"><span>Module 2 of 6</span><span>32% complete</span></div>
+
+      <div class="module-list">
+        <div class="mod-item"><div class="mod-check done"><i class="ti ti-check" aria-hidden="true"></i></div><div class="mod-name">1. What makes a leader</div><div class="mod-type">Video · 12 min</div></div>
+        <div class="mod-item"><div class="mod-check current"><i class="ti ti-player-play" aria-hidden="true"></i></div><div class="mod-name">2. Decision-making under pressure</div><div class="mod-type">Reading + quiz</div></div>
+        <div class="mod-item"><div class="mod-check locked"><i class="ti ti-lock" aria-hidden="true"></i></div><div class="mod-name">3. Reflection assignment</div><div class="mod-type">Written submission</div></div>
+        <div class="mod-item"><div class="mod-check locked"><i class="ti ti-lock" aria-hidden="true"></i></div><div class="mod-name">4. Mid-course quiz</div><div class="mod-type">12 questions</div></div>
+      </div>
+    </div>
+
+    <div class="course-card">
+      <div class="panel-title" style="margin-bottom:8px">Submit assignment - Reflection, Module 3</div>
+      <div class="upload-box">
+        <div class="upload-icn"><i class="ti ti-upload" style="font-size:16px" aria-hidden="true"></i></div>
+        <div class="upload-title">Drop your file or click to upload</div>
+        <div class="upload-sub">PDF or DOCX, max 10MB · due in 4 days</div>
+      </div>
+    </div>
+
+    <div class="course-card">
+      <div class="course-head">
+        <div class="course-name">Conflict Resolution</div>
+        <div class="course-due ok">Due in 26 days</div>
+      </div>
+      <div class="course-bar"><div class="course-bar-fill" style="width:8%;background:#2E6B4F"></div></div>
+      <div class="course-meta-row"><span>Module 1 of 5</span><span>8% complete</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function showV(key){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v-'+key).classList.add('on');
+  document.querySelector('[data-v="'+key+'"]').classList.add('on');
+}
+function tTab(key){
+  document.querySelectorAll('.t-content').forEach(c=>c.style.display='none');
+  document.querySelectorAll('.t2').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tc-'+key).style.display='block';
+  document.querySelector('[data-t="'+key+'"]').classList.add('on');
+}
+</script>
