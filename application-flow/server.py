@@ -8,19 +8,140 @@ from __future__ import annotations
 import base64
 import binascii
 import json
+import os
 import re
+import smtplib
 import threading
+from email.message import EmailMessage
 import uuid
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
 LOCK = threading.Lock()
 APPLICATIONS: list[dict] = []
 RESUMES: dict[str, dict] = {}
 MAX_RESUME_BYTES = 5 * 1024 * 1024
+PIPELINE_STAGES = ("Submitted", "Screening", "Assessment", "Interview", "Offer", "Hired", "Rejected", "Withdrawn")
+
+
+class BooleanSearch:
+    """Small recursive-descent parser with NOT > AND > OR precedence."""
+
+    def __init__(self, expression: str):
+        if len(expression) > 500:
+            raise ValueError("Search query must be 500 characters or fewer")
+        self.tokens = re.findall(r'"(?:[^"\\]|\\.)*"|\(|\)|\bAND\b|\bOR\b|\bNOT\b|[^\s()]+', expression, re.I)
+        self.position = 0
+
+    def peek(self):
+        return self.tokens[self.position].upper() if self.position < len(self.tokens) else None
+
+    def take(self):
+        token = self.tokens[self.position]
+        self.position += 1
+        return token
+
+    def parse(self):
+        if not self.tokens:
+            return None
+        result = self.parse_or()
+        if self.position != len(self.tokens):
+            raise ValueError("Unexpected token in Boolean search")
+        return result
+
+    def parse_or(self):
+        node = self.parse_and()
+        while self.peek() == "OR":
+            self.take()
+            node = ("OR", node, self.parse_and())
+        return node
+
+    def parse_and(self):
+        node = self.parse_unary()
+        while self.peek() == "AND":
+            self.take()
+            node = ("AND", node, self.parse_unary())
+        return node
+
+    def parse_unary(self):
+        if self.peek() == "NOT":
+            self.take()
+            return ("NOT", self.parse_unary())
+        if self.peek() == "(":
+            self.take()
+            node = self.parse_or()
+            if self.peek() != ")":
+                raise ValueError("Missing closing parenthesis in Boolean search")
+            self.take()
+            return node
+        token = self.peek()
+        if token is None or token in ("AND", "OR", ")"):
+            raise ValueError("Expected a search term in Boolean search")
+        raw = self.take()
+        return ("TERM", raw[1:-1] if raw.startswith('"') and raw.endswith('"') else raw)
+
+    @staticmethod
+    def matches(node, text: str) -> bool:
+        if node is None:
+            return True
+        operator = node[0]
+        if operator == "TERM":
+            return node[1].casefold() in text.casefold()
+        if operator == "NOT":
+            return not BooleanSearch.matches(node[1], text)
+        if operator == "AND":
+            return BooleanSearch.matches(node[1], text) and BooleanSearch.matches(node[2], text)
+        return BooleanSearch.matches(node[1], text) or BooleanSearch.matches(node[2], text)
+
+
+def applicant_search_text(record: dict) -> str:
+    return " ".join(str(value) for value in (
+        record.get("candidateName", ""), record.get("candidateEmail", ""),
+        record.get("jobTitle", ""), record.get("jobId", ""), record.get("skills", ""),
+        record.get("expertise", ""), record.get("qualifications", ""),
+        record.get("experience", ""), record.get("eligibility", ""),
+    ))
+
+
+def send_confirmation(record: dict) -> dict:
+    """Send a candidate receipt email when SMTP environment settings are configured."""
+    host = os.getenv("SMTP_HOST")
+    sender = os.getenv("SMTP_FROM")
+    if not host or not sender:
+        return {"status": "not_configured", "sentAt": None}
+    message = EmailMessage()
+    message["Subject"] = f"Application received: {record['jobTitle']}"
+    message["From"] = sender
+    message["To"] = record["candidateEmail"]
+    message.set_content(
+        f"Hello {record['candidateName']},\\n\\n"
+        f"We have received your application for {record['jobTitle']} "
+        f"(reference {record['id']}). The hiring team will review it and update you.\\n\\n"
+        "Regards,\\nTalent Acquisition"
+    )
+    port = int(os.getenv("SMTP_PORT", "587"))
+    username = os.getenv("SMTP_USER")
+    password = os.getenv("SMTP_PASSWORD")
+    timeout = 15
+    try:
+        if os.getenv("SMTP_USE_SSL", "false").lower() == "true":
+            with smtplib.SMTP_SSL(host, port, timeout=timeout) as client:
+                if username:
+                    client.login(username, password or "")
+                client.send_message(message)
+        else:
+            with smtplib.SMTP(host, port, timeout=timeout) as client:
+                client.starttls()
+                if username:
+                    client.login(username, password or "")
+                client.send_message(message)
+        return {"status": "sent", "sentAt": now_iso()}
+    except Exception as exc:
+        print(f"Confirmation email delivery failed: {type(exc).__name__}")
+        return {"status": "failed", "sentAt": None, "detail": "Email provider delivery failed"}
 
 
 def now_iso() -> str:
@@ -58,13 +179,42 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/health":
             return self._json(200, {"ok": True, "service": "application-flow-demo"})
         if parsed.path == "/api/applications":
-            # Demo-only filter; production must derive identity from authenticated sessions.
+            # Demo-only identity filter. Production requires authenticated roles.
             email = self.headers.get("X-Demo-Email", "").strip().lower()
+            params = parse_qs(parsed.query)
+            query = params.get("q", [""])[0].strip()
+            stage = params.get("stage", [""])[0].strip()
+            job_id = params.get("jobId", [""])[0].strip()
+            try:
+                expression = BooleanSearch(query).parse()
+            except ValueError as exc:
+                return self._json(400, {"error": str(exc)})
             with LOCK:
                 records = [dict(item) for item in APPLICATIONS]
             if email:
                 records = [item for item in records if item["candidateEmail"].lower() == email]
-            return self._json(200, {"applications": records})
+            if stage:
+                records = [item for item in records if item.get("stage") == stage]
+            if job_id:
+                records = [item for item in records if item.get("jobId") == job_id]
+            if expression:
+                records = [item for item in records if BooleanSearch.matches(expression, applicant_search_text(item))]
+            return self._json(200, {"applications": records, "count": len(records), "stages": PIPELINE_STAGES})
+        if parsed.path == "/api/ats/stages":
+            return self._json(200, {"stages": PIPELINE_STAGES})
+        if parsed.path == "/api/ats/jobs":
+            with LOCK:
+                records = [dict(item) for item in APPLICATIONS]
+            jobs = {}
+            for item in records:
+                job = jobs.setdefault(item["jobId"], {
+                    "jobId": item["jobId"], "jobTitle": item["jobTitle"],
+                    "total": 0, "stageCounts": {}, "applications": [],
+                })
+                job["total"] += 1
+                job["stageCounts"][item["stage"]] = job["stageCounts"].get(item["stage"], 0) + 1
+                job["applications"].append(item)
+            return self._json(200, {"jobs": list(jobs.values())})
         match = re.fullmatch(r"/api/resumes/([a-f0-9-]+)", parsed.path)
         if match:
             with LOCK:
@@ -144,7 +294,7 @@ class Handler(SimpleHTTPRequestHandler):
                 "declarations": data.get("declarations", {}),
                 "resumeName": filename,
                 "resumeId": resume_id,
-                "stage": "Applied",
+                "stage": "Submitted",
                 "createdAt": now_iso(),
                 "updatedAt": now_iso(),
                 "interview": None,
@@ -153,7 +303,14 @@ class Handler(SimpleHTTPRequestHandler):
                               "message": "Application received"}],
             }
             APPLICATIONS.append(record)
-        return self._json(201, {"application": record})
+        email_delivery = send_confirmation(record)
+        with LOCK:
+            record["confirmationEmail"] = email_delivery
+            record["activity"].append({
+                "type": "confirmation_email", "at": now_iso(),
+                "message": f"Candidate confirmation email {email_delivery['status']}",
+            })
+        return self._json(201, {"application": record, "confirmationEmail": email_delivery})
 
     def do_PATCH(self):
         match = re.fullmatch(r"/api/applications/([a-f0-9-]+)", urlparse(self.path).path)
@@ -169,7 +326,10 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(404, {"error": "Application not found"})
             messages = []
             if "stage" in data:
-                record["stage"] = str(data["stage"]).strip()
+                new_stage = str(data["stage"]).strip()
+                if new_stage not in PIPELINE_STAGES:
+                    return self._json(400, {"error": "Invalid ATS stage", "allowedStages": PIPELINE_STAGES})
+                record["stage"] = new_stage
                 messages.append(f"Application stage updated to {record['stage']}")
             if "interview" in data:
                 record["interview"] = data["interview"]
