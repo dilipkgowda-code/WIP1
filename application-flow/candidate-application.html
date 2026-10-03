@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Candidate application | WIP</title>
+<style>
+:root{--ink:#203632;--muted:#667a73;--green:#397b67;--mint:#e8f2ec;--gold:#d9ad58;--paper:#fbfcf8;--line:#dce5df}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,sans-serif}header{padding:20px max(22px,calc((100% - 900px)/2));background:var(--mint);border-bottom:1px solid var(--line)}a{color:var(--green);font-weight:700;text-decoration:none}main{max-width:900px;margin:30px auto;padding:0 20px 60px}h1{font-size:30px;margin:0 0 6px}h2{font-size:19px;margin:0 0 14px}.intro,.hint{color:var(--muted)}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #2036320a}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px}.wide{grid-column:1/-1}label,legend{font-weight:650}input,select,textarea{width:100%;font:inherit;color:var(--ink);border:1px solid #bdcec4;border-radius:9px;padding:10px 12px;background:#fff}input:focus,select:focus,textarea:focus{outline:3px solid #d2e7da;border-color:var(--green)}textarea{min-height:86px}.repeat{border:1px solid var(--line);padding:15px;border-radius:11px;margin:12px 0}.repeat-head{display:flex;justify-content:space-between;margin-bottom:12px}.btn{border:0;border-radius:9px;padding:11px 16px;background:var(--green);color:white;font-weight:700;cursor:pointer}.btn.alt{background:var(--mint);color:var(--green)}.btn.remove{background:#f9eeee;color:#843d3d;padding:6px 10px}.check{display:flex;gap:10px;margin:13px 0}.check input{width:auto;margin-top:5px}.notice{background:#fff8e7;border-left:4px solid var(--gold);padding:12px;border-radius:6px}.status{font-weight:650}.ok{color:#267254}.error{color:#9b3838}[hidden]{display:none!important}@media(max-width:620px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:17px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header><a href="login.html">← Back to sign in</a></header>
+<main>
+<h1>Candidate application</h1><p class="intro">Complete your role application and attach your resume. Required fields are marked.</p>
+<form id="applicationForm">
+<section class="card"><h2>Role and contact</h2><div class="grid">
+<div class="field"><label for="jobTitle">Role title *</label><input id="jobTitle" name="jobTitle" required value="Fintech role"></div>
+<div class="field"><label for="jobId">Role reference *</label><input id="jobId" name="jobId" required value="FIN-ROLE-001"></div>
+<div class="field"><label for="candidateName">Full name *</label><input id="candidateName" name="candidateName" autocomplete="name" required></div>
+<div class="field"><label for="candidateEmail">Email *</label><input id="candidateEmail" name="candidateEmail" type="email" autocomplete="email" required></div>
+<div class="field"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
+<div class="field"><label for="resumeFile">Resume upload (PDF, DOC, DOCX; max 5 MB) *</label><input id="resumeFile" name="resumeFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required><small class="hint">The demo keeps uploaded files in memory until the server stops.</small></div>
+</div></section>
+<section class="card"><h2>Qualifications</h2><p class="hint">Add relevant degrees or professional qualifications, awarding institution, and dates.</p><div id="educationList"></div><button class="btn alt" id="addEducation" type="button">＋ Add qualification</button></section>
+<section class="card"><h2>Skills and expertise</h2><div class="grid"><div class="field wide"><label for="skills">Key skills * (comma separated)</label><textarea id="skills" name="skills" required placeholder="Credit risk, Python, KYC, SQL"></textarea></div><div class="field wide"><label for="expertise">Area of expertise</label><input id="expertise" name="expertise" placeholder="Payments, fraud analytics, etc."></div></div></section>
+<section class="card"><h2>Work experience</h2><p class="hint">Include employer, title, and dates. Leave blank if you are a fresher.</p><div id="experienceList"></div><button class="btn alt" id="addExperience" type="button">＋ Add experience</button></section>
+<section class="card"><h2>Eligibility and declarations</h2><div class="grid">
+<div class="field"><label for="noticePeriod">Notice period / availability</label><select id="noticePeriod" name="noticePeriod"><option value="">Select</option><option>Immediate</option><option>15 days</option><option>30 days</option><option>60 days</option><option>90 days</option><option>Other / discuss</option></select></div>
+<div class="field"><label for="workEligibility">Are you legally eligible to work in India for this role? *</label><select id="workEligibility" name="workEligibility" required><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option><option value="prefer-discuss">I would like to discuss</option></select></div></div>
+<p class="notice">Do not provide Aadhaar, PAN, bank details, caste, religion, medical information, or other sensitive personal data in this application.</p>
+<label class="check"><input type="checkbox" name="conflict" value="yes"><span>I will disclose any actual or potential professional conflict relevant to this role through the employer's formal process.</span></label>
+<label class="check"><input type="checkbox" name="accuracy" value="yes" required><span>I confirm that the information provided is accurate to the best of my knowledge. *</span></label>
+<label class="check"><input type="checkbox" name="privacyConsent" value="yes" required><span>I acknowledge that my application information may be used for recruitment under the employer's applicant privacy notice. *</span></label>
+<p class="hint">Have Indian employment counsel review the eligibility wording, retention periods, and applicant privacy notice before production use.</p></section>
+<button class="btn" type="submit">Submit application</button> <span id="status" class="status" role="status" aria-live="polite"></span>
+</form>
+</main>
+<template id="educationTemplate"><div class="repeat"><div class="repeat-head"><strong>Qualification</strong><button class="btn remove" type="button">Remove</button></div><div class="grid">
+<div class="field"><label>Qualification / degree *</label><input data-key="qualification" required placeholder="B.Com, MBA Finance"></div><div class="field"><label>University / institution *</label><input data-key="institution" required></div>
+<div class="field"><label>Start date</label><input data-key="startDate" type="month"></div><div class="field"><label>End date</label><input data-key="endDate" type="month"></div>
+<div class="field wide"><label>Specialization / result (optional)</label><input data-key="specialization"></div></div></div></template>
+<template id="experienceTemplate"><div class="repeat"><div class="repeat-head"><strong>Experience</strong><button class="btn remove" type="button">Remove</button></div><div class="grid">
+<div class="field"><label>Employer *</label><input data-key="employer" required></div><div class="field"><label>Job title *</label><input data-key="title" required></div>
+<div class="field"><label>Start date *</label><input data-key="startDate" type="month" required></div><div class="field"><label>End date</label><input data-key="endDate" type="month"></div>
+<div class="field wide"><label>Key responsibilities / achievements</label><textarea data-key="summary"></textarea></div></div></div></template>
+<script>
+const educationList=document.querySelector('#educationList'),experienceList=document.querySelector('#experienceList');
+function addRecord(template,list){const fragment=document.querySelector(template).content.cloneNode(true),card=fragment.querySelector('.repeat');card.querySelector('.remove').addEventListener('click',()=>card.remove());list.append(card)}
+document.querySelector('#addEducation').addEventListener('click',()=>addRecord('#educationTemplate',educationList));
+document.querySelector('#addExperience').addEventListener('click',()=>addRecord('#experienceTemplate',experienceList));
+addRecord('#educationTemplate',educationList);
+function collect(list){return [...list.querySelectorAll('.repeat')].map(card=>Object.fromEntries([...card.querySelectorAll('[data-key]')].map(input=>[input.dataset.key,input.value.trim()])))}
+document.querySelector('#applicationForm').addEventListener('submit',async event=>{
+ event.preventDefault();const form=event.currentTarget,status=document.querySelector('#status');if(!form.reportValidity())return;
+ const values=Object.fromEntries(new FormData(form).entries()),file=document.querySelector('#resumeFile').files[0];
+ if(!file){status.className='status error';status.textContent='Please choose a resume file.';return}
+ if(file.size>5*1024*1024){status.className='status error';status.textContent='Resume must be 5 MB or smaller.';return}
+ status.className='status';status.textContent='Reading resume…';
+ const encoded=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Could not read the resume'))}).catch(error=>{status.className='status error';status.textContent=error.message;return null});
+ if(!encoded)return;
+ const payload={jobId:values.jobId,jobTitle:values.jobTitle,candidateName:values.candidateName,candidateEmail:values.candidateEmail,phone:values.phone,resume:{filename:file.name,base64:encoded},skills:values.skills.split(',').map(s=>s.trim()).filter(Boolean),expertise:values.expertise,qualifications:collect(educationList),experience:collect(experienceList),eligibility:{workInIndia:values.workEligibility,noticePeriod:values.noticePeriod},declarations:{conflictOfInterest:values.conflict==='yes',accuracyConfirmed:values.accuracy==='yes',privacyAcknowledged:values.privacyConsent==='yes'}};
+ status.textContent='Submitting…';
+ try{const response=await fetch('/api/applications',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await response.json();if(!response.ok)throw new Error(result.error||'Could not submit application');status.className='status ok';status.textContent='Application submitted. Reference: '+result.application.id;form.querySelector('[type=submit]').disabled=true}
+ catch(error){status.className='status error';status.textContent=error.message+' — check that the local server is running.'}
+});
+</script>
+</body>
+</html>
