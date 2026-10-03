@@ -117,10 +117,10 @@ def send_confirmation(record: dict) -> dict:
     message["From"] = sender
     message["To"] = record["candidateEmail"]
     message.set_content(
-        f"Hello {record['candidateName']},\\n\\n"
+        f"Hello {record['candidateName']},\n\n"
         f"We have received your application for {record['jobTitle']} "
-        f"(reference {record['id']}). The hiring team will review it and update you.\\n\\n"
-        "Regards,\\nTalent Acquisition"
+        f"(reference {record['id']}). The hiring team will review it and update you.\n\n"
+        "Regards,\nTalent Acquisition"
     )
     port = int(os.getenv("SMTP_PORT", "587"))
     username = os.getenv("SMTP_USER")
