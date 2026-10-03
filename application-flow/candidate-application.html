@@ -57,7 +57,7 @@ document.querySelector('#applicationForm').addEventListener('submit',async event
  if(!file){status.className='status error';status.textContent='Please choose a resume file.';return}
  if(file.size>5*1024*1024){status.className='status error';status.textContent='Resume must be 5 MB or smaller.';return}
  status.className='status';status.textContent='Reading resume…';
- const encoded=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Could not read the resume'))}).catch(error=>{status.className='status error';status.textContent=error.message;return null});
+ const encoded=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('Could not read the resume'));reader.readAsDataURL(file)}).catch(error=>{status.className='status error';status.textContent=error.message;return null});
  if(!encoded)return;
  const payload={jobId:values.jobId,jobTitle:values.jobTitle,candidateName:values.candidateName,candidateEmail:values.candidateEmail,phone:values.phone,resume:{filename:file.name,base64:encoded},skills:values.skills.split(',').map(s=>s.trim()).filter(Boolean),expertise:values.expertise,qualifications:collect(educationList),experience:collect(experienceList),eligibility:{workInIndia:values.workEligibility,noticePeriod:values.noticePeriod},declarations:{conflictOfInterest:values.conflict==='yes',accuracyConfirmed:values.accuracy==='yes',privacyAcknowledged:values.privacyConsent==='yes'}};
  status.textContent='Submitting…';
