@@ -13,7 +13,7 @@ As a hirer, I want to publish jobs to a candidate-facing application portal, fin
 
 1. **Post a job:** An authorized hirer can create, edit, publish, and close a job with the agreed role details, department, experience level, skills, expertise, and application fields.
 2. **Candidate application:** A candidate can open the published job page, submit the required application information, and receive confirmation. The candidate can access only their own application information.
-3. **Boolean skill search:** An authorized hirer can search applicant skills using the agreed Boolean syntax (proposed: `AND`, `OR`, `NOT`, parentheses, and quoted phrases). Results show the criteria that matched and only include applicants the hirer is authorized to view.
+3. **Role-specific screening:** While designing a role, an authorized hirer can configure mandatory skills, key skills, optional skills, job-related red flags, and a Boolean expression using `AND`, `OR`, `NOT`, parentheses, and quoted phrases. On application, the system presents a screening breakdown showing matched/missing criteria and red flags for human review; it does not automatically reject candidates. Hirers can also use Boolean search to filter applications and may only view applicants they are authorized to access.
 4. **Application tracking:** The hirer can view the applicants for a job and move each application through an agreed workflow. The candidate receives an automatic update when a configured stage change occurs.
 5. **Interview scheduling:** The hirer can set, change, or cancel an interview with date, time zone, format/location or meeting link, and interview participants. The candidate receives the corresponding message.
 6. **Interview results:** An authorized interviewer can record structured feedback and an outcome. Access to interviewer notes follows an agreed permission rule. The candidate receives an outcome message only for outcomes approved for communication.
@@ -34,7 +34,7 @@ The Product Owner and development team should select a coherent slice that can b
 ## Open refinement decisions
 
 - Which fields are required on the job and candidate application form? Are CV/file uploads needed in the first slice?
-- What Boolean syntax and skill normalization are expected? Are searches exact matches, synonyms, or both?
+- Should skill criteria use exact phrases, normalized synonyms, or both? Which criteria can be configured as mandatory, key, optional, or job-related red flags? How should Boolean expressions be evaluated and explained to hirers?
 - What are the application stages, and which stage changes should message candidates?
 - Should the first candidate messages be in-portal, email, SMS, or a combination? What consent is required?
 - Who can see interviewer notes and candidate outcomes? Which outcomes can be sent automatically?
