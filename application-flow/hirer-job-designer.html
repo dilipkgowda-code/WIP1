@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Role designer | WIP</title>
+<style>
+:root{--ink:#203632;--muted:#667a73;--green:#397b67;--mint:#e8f2ec;--gold:#d9ad58;--paper:#fbfcf8;--line:#dce5df}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,sans-serif}header{padding:20px max(22px,calc((100% - 980px)/2));background:var(--mint);border-bottom:1px solid var(--line)}header a{color:var(--green);font-weight:700;text-decoration:none}main{max-width:980px;margin:30px auto;padding:0 20px 60px}h1{margin:0 0 8px;font-size:29px}h2{font-size:19px;margin:0 0 14px}.muted{color:var(--muted)}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #2036320a}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px}.wide{grid-column:1/-1}label{font-weight:650}input,select,textarea{width:100%;font:inherit;color:var(--ink);border:1px solid #bdcec4;border-radius:9px;padding:10px 12px;background:#fff}textarea{min-height:84px;resize:vertical}input:focus,select:focus,textarea:focus{outline:3px solid #d2e7da;border-color:var(--green)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:9px;padding:10px 15px;background:var(--green);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:var(--mint);color:var(--green)}.notice{padding:12px 14px;background:#fff8e7;border-left:4px solid var(--gold);border-radius:7px;margin:12px 0}.status{font-weight:650}.ok{color:#267254}.error{color:#9b3838}.job{border-top:1px solid var(--line);padding:14px 0}.job:first-child{border-top:0}.pill{display:inline-block;border-radius:99px;background:var(--mint);color:var(--green);padding:3px 9px;font-size:12px;font-weight:700}code{background:#f0f3ef;padding:2px 5px;border-radius:4px}@media(max-width:650px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:17px}}
+</style>
+</head>
+<body>
+<header><a href="candidate-application.html">← Candidate application preview</a></header>
+<main>
+<h1>Role and screening designer</h1>
+<p class="muted">Define the role and the candidate signals the recruiter will use during application review.</p>
+<section class="card">
+<h2>Saved roles</h2>
+<div class="field"><label for="savedJobs">Choose a role to edit</label><select id="savedJobs"><option value="">Create a new role…</option></select></div>
+<div id="jobList" class="muted" style="margin-top:12px">Loading roles…</div>
+</section>
+<form id="jobForm">
+<section class="card"><h2>Role details</h2><div class="grid">
+<div class="field"><label for="jobId">Role reference *</label><input id="jobId" required placeholder="e.g. FIN-ROLE-002"></div>
+<div class="field"><label for="jobTitle">Job title *</label><input id="jobTitle" required placeholder="e.g. Senior Credit Risk Analyst"></div>
+<div class="field"><label for="department">Department</label><input id="department" placeholder="e.g. Risk"></div>
+<div class="field"><label for="experienceLevel">Experience level</label><input id="experienceLevel" placeholder="e.g. Mid-level, 4–7 years"></div>
+<div class="field wide"><label for="description">Role summary</label><textarea id="description"></textarea></div>
+<label class="wide"><input id="enabled" type="checkbox" checked style="width:auto"> Role is enabled and accepting applications</label>
+</div></section>
+<section class="card"><h2>Screening criteria</h2>
+<p class="muted">List skills as comma-separated values or one per line. These criteria create a screening summary for the recruiter when an application arrives.</p>
+<div class="grid">
+<div class="field"><label for="mandatorySkills">Mandatory skills</label><textarea id="mandatorySkills" placeholder="KYC, SQL"></textarea></div>
+<div class="field"><label for="keySkills">Key skills</label><textarea id="keySkills" placeholder="Credit risk, Python"></textarea></div>
+<div class="field"><label for="optionalSkills">Optional skills</label><textarea id="optionalSkills" placeholder="Power BI, dbt"></textarea></div>
+<div class="field"><label for="redFlags">Job-related red flags for human review</label><textarea id="redFlags" placeholder="e.g. missing required licence, stated availability conflicts with role requirement"></textarea></div>
+<div class="field wide"><label for="booleanQuery">Boolean screening expression (optional)</label><textarea id="booleanQuery" placeholder='"credit risk" AND (SQL OR Python) NOT internship'></textarea><small class="muted">Supports AND, OR, NOT, parentheses, and quoted phrases. Example: <code>"credit risk" AND (SQL OR Python) NOT internship</code></small></div>
+</div>
+<div class="notice">Screening matches and red flags are decision-support signals only. Review the candidate’s application before making a decision. Keep criteria relevant to the role; do not use protected or sensitive personal characteristics.</div>
+</section>
+<div class="actions"><button class="btn" type="submit">Save role and criteria</button><button id="newRole" class="btn secondary" type="button">Clear / new role</button><span id="status" class="status" role="status" aria-live="polite"></span></div>
+</form>
+</main>
+<script>
+const form=document.querySelector('#jobForm'),selector=document.querySelector('#savedJobs'),statusNode=document.querySelector('#status'),list=document.querySelector('#jobList');
+let jobs=[];
+function splitList(value){return value.split(/[\n,]+/).map(x=>x.trim()).filter(Boolean)}
+function fill(job){form.elements.jobId.value=job?.jobId||'';form.elements.jobTitle.value=job?.jobTitle||'';form.elements.department.value=job?.department||'';form.elements.experienceLevel.value=job?.experienceLevel||'';form.elements.description.value=job?.description||'';form.elements.enabled.checked=job?job.enabled:true;const c=job?.screeningCriteria||{};form.elements.mandatorySkills.value=(c.mandatorySkills||[]).join('\n');form.elements.keySkills.value=(c.keySkills||[]).join('\n');form.elements.optionalSkills.value=(c.optionalSkills||[]).join('\n');form.elements.redFlags.value=(c.redFlags||[]).join('\n');form.elements.booleanQuery.value=c.booleanQuery||''}
+function render(){selector.innerHTML='<option value="">Create a new role…</option>';for(const job of jobs){const option=document.createElement('option');option.value=job.jobId;option.textContent=job.jobTitle+' ('+job.jobId+')';selector.append(option)}list.replaceChildren();if(!jobs.length){list.textContent='No roles saved yet.';return}for(const job of jobs){const row=document.createElement('div');row.className='job';const title=document.createElement('strong');title.textContent=job.jobTitle+' · '+job.jobId;const detail=document.createElement('div');detail.textContent=job.department+' · '+(job.enabled?'Accepting applications':'Disabled');const criteria=document.createElement('small');const c=job.screeningCriteria||{};criteria.textContent='Mandatory: '+(c.mandatorySkills||[]).join(', ')+' | Key: '+(c.keySkills||[]).join(', ')+' | Optional: '+(c.optionalSkills||[]).join(', ')+' | Red flags: '+(c.redFlags||[]).join(', ');row.append(title,detail,criteria);list.append(row)}}
+async function loadJobs(){try{const response=await fetch('/api/jobs');const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not load roles');jobs=data.jobs||[];render()}catch(error){list.textContent=error.message+' — check that the backend is running.'}}
+selector.addEventListener('change',()=>{const job=jobs.find(item=>item.jobId===selector.value);fill(job);document.querySelector('#jobId').readOnly=Boolean(job)});
+document.querySelector('#newRole').addEventListener('click',()=>{selector.value='';document.querySelector('#jobId').readOnly=false;fill(null);statusNode.textContent=''});
+form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;const jobId=form.elements.jobId.value.trim(),existing=jobs.some(job=>job.jobId===jobId),payload={jobId,jobTitle:form.elements.jobTitle.value.trim(),department:form.elements.department.value.trim(),experienceLevel:form.elements.experienceLevel.value.trim(),description:form.elements.description.value.trim(),enabled:form.elements.enabled.checked,screeningCriteria:{mandatorySkills:splitList(form.elements.mandatorySkills.value),keySkills:splitList(form.elements.keySkills.value),optionalSkills:splitList(form.elements.optionalSkills.value),redFlags:splitList(form.elements.redFlags.value),booleanQuery:form.elements.booleanQuery.value.trim()}};statusNode.className='status';statusNode.textContent='Saving…';try{const response=await fetch(existing?'/api/jobs/'+encodeURIComponent(jobId):'/api/jobs',{method:existing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not save role');statusNode.className='status ok';statusNode.textContent='Role and screening criteria saved.';await loadJobs();selector.value=jobId;document.querySelector('#jobId').readOnly=true}catch(error){statusNode.className='status error';statusNode.textContent=error.message}});
+loadJobs();
+</script>
+</body>
+</html>
