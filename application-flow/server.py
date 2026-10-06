@@ -24,6 +24,7 @@ LOCK = threading.Lock()
 APPLICATIONS: list[dict] = []
 RESUMES: dict[str, dict] = {}
 MAX_RESUME_BYTES = 5 * 1024 * 1024
+JOBS: dict[str, dict] = {}
 PIPELINE_STAGES = ("Submitted", "Screening", "Assessment", "Interview", "Offer", "Hired", "Rejected", "Withdrawn")
 
 
@@ -104,6 +105,84 @@ def applicant_search_text(record: dict) -> str:
         record.get("expertise", ""), record.get("qualifications", ""),
         record.get("experience", ""), record.get("eligibility", ""),
     ))
+
+
+
+def skill_list(source: dict, field: str) -> list[str]:
+    value = source.get(field, [])
+    if isinstance(value, str):
+        value = [part.strip() for part in re.split(r"[,\n]+", value)]
+    if not isinstance(value, list):
+        raise ValueError(f"{field} must be a list of skill names")
+    cleaned = []
+    for item in value:
+        if not isinstance(item, str):
+            raise ValueError(f"{field} values must be text")
+        item = item.strip()
+        if item and item.casefold() not in {entry.casefold() for entry in cleaned}:
+            cleaned.append(item)
+    return cleaned
+
+
+def build_job(payload: dict, existing: dict | None = None) -> dict:
+    job_id = str(payload.get("jobId", (existing or {}).get("jobId", ""))).strip()
+    title = str(payload.get("jobTitle", (existing or {}).get("jobTitle", ""))).strip()
+    if not job_id or not title:
+        raise ValueError("jobId and jobTitle are required")
+    criteria_source = payload.get("screeningCriteria", (existing or {}).get("screeningCriteria", {}))
+    if not isinstance(criteria_source, dict):
+        raise ValueError("screeningCriteria must be an object")
+    boolean_query = str(criteria_source.get("booleanQuery", "")).strip()
+    try:
+        BooleanSearch(boolean_query).parse()
+    except ValueError as exc:
+        raise ValueError(f"Invalid Boolean screening query: {exc}") from exc
+    return {
+        "jobId": job_id,
+        "jobTitle": title,
+        "department": str(payload.get("department", (existing or {}).get("department", ""))).strip(),
+        "experienceLevel": str(payload.get("experienceLevel", (existing or {}).get("experienceLevel", ""))).strip(),
+        "description": str(payload.get("description", (existing or {}).get("description", ""))).strip(),
+        "enabled": bool(payload.get("enabled", (existing or {}).get("enabled", True))),
+        "screeningCriteria": {
+            "mandatorySkills": skill_list(criteria_source, "mandatorySkills"),
+            "keySkills": skill_list(criteria_source, "keySkills"),
+            "optionalSkills": skill_list(criteria_source, "optionalSkills"),
+            "redFlags": skill_list(criteria_source, "redFlags"),
+            "booleanQuery": boolean_query,
+        },
+        "updatedAt": now_iso(),
+        "createdAt": (existing or {}).get("createdAt", now_iso()),
+    }
+
+
+def contains_skill(profile_text: str, skill: str) -> bool:
+    # Match skill phrases without treating (for example) "R" as a match in "risk".
+    pattern = rf"(?<![A-Za-z0-9]){re.escape(skill)}(?![A-Za-z0-9])"
+    return re.search(pattern, profile_text, re.I) is not None
+
+
+def screen_candidate(candidate: dict, job: dict) -> dict:
+    criteria = job["screeningCriteria"]
+    profile = applicant_search_text(candidate)
+    matched = lambda entries: [entry for entry in entries if contains_skill(profile, entry)]
+    mandatory_matched = matched(criteria["mandatorySkills"])
+    missing_mandatory = [entry for entry in criteria["mandatorySkills"] if entry not in mandatory_matched]
+    expression = BooleanSearch(criteria["booleanQuery"]).parse()
+    boolean_match = BooleanSearch.matches(expression, profile)
+    return {
+        "jobId": job["jobId"],
+        "evaluatedAt": now_iso(),
+        "mandatorySkillsMatched": mandatory_matched,
+        "mandatorySkillsMissing": missing_mandatory,
+        "allMandatorySkillsPresent": not missing_mandatory,
+        "keySkillsMatched": matched(criteria["keySkills"]),
+        "optionalSkillsMatched": matched(criteria["optionalSkills"]),
+        "redFlagsForHumanReview": matched(criteria["redFlags"]),
+        "booleanQuery": criteria["booleanQuery"],
+        "booleanQueryMatched": boolean_match,
+        "reviewStatus": "human_review_required",
+    }
 
 
 def send_confirmation(record: dict) -> dict:
@@ -200,6 +279,10 @@ class Handler(SimpleHTTPRequestHandler):
             if expression:
                 records = [item for item in records if BooleanSearch.matches(expression, applicant_search_text(item))]
             return self._json(200, {"applications": records, "count": len(records), "stages": PIPELINE_STAGES})
+        if parsed.path == "/api/jobs":
+            with LOCK:
+                jobs = [dict(job) for job in JOBS.values()]
+            return self._json(200, {"jobs": jobs})
         if parsed.path == "/api/ats/stages":
             return self._json(200, {"stages": PIPELINE_STAGES})
         if parsed.path == "/api/ats/jobs":
@@ -232,7 +315,19 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if urlparse(self.path).path != "/api/applications":
+        route = urlparse(self.path).path
+        if route == "/api/jobs":
+            try:
+                data = self._body()
+                job = build_job(data)
+            except (ValueError, json.JSONDecodeError) as exc:
+                return self._json(400, {"error": str(exc)})
+            with LOCK:
+                if job["jobId"] in JOBS:
+                    return self._json(409, {"error": "A role with this jobId already exists"})
+                JOBS[job["jobId"]] = job
+            return self._json(201, {"job": job})
+        if route != "/api/applications":
             return self._json(404, {"error": "Not found"})
         try:
             data = self._body()
@@ -302,6 +397,10 @@ class Handler(SimpleHTTPRequestHandler):
                 "activity": [{"type": "submitted", "at": now_iso(),
                               "message": "Application received"}],
             }
+            role = JOBS.get(record["jobId"])
+            if role and not role.get("enabled", True):
+                return self._json(409, {"error": "This role is not accepting applications"})
+            record["screening"] = screen_candidate(record, role) if role else None
             APPLICATIONS.append(record)
         email_delivery = send_confirmation(record)
         with LOCK:
@@ -313,7 +412,25 @@ class Handler(SimpleHTTPRequestHandler):
         return self._json(201, {"application": record, "confirmationEmail": email_delivery})
 
     def do_PATCH(self):
-        match = re.fullmatch(r"/api/applications/([a-f0-9-]+)", urlparse(self.path).path)
+        route = urlparse(self.path).path
+        job_match = re.fullmatch(r"/api/jobs/([^/]+)", route)
+        if job_match:
+            try:
+                data = self._body()
+            except (ValueError, json.JSONDecodeError) as exc:
+                return self._json(400, {"error": str(exc)})
+            with LOCK:
+                job_id = job_match.group(1)
+                existing = JOBS.get(job_id)
+                if not existing:
+                    return self._json(404, {"error": "Role not found"})
+                try:
+                    updated = build_job(data, existing)
+                except ValueError as exc:
+                    return self._json(400, {"error": str(exc)})
+                JOBS[job_id] = updated
+            return self._json(200, {"job": updated})
+        match = re.fullmatch(r"/api/applications/([a-f0-9-]+)", route)
         if not match:
             return self._json(404, {"error": "Not found"})
         try:
