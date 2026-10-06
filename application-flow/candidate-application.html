@@ -15,8 +15,7 @@
 <h1>Candidate application</h1><p class="intro">Complete your role application and attach your resume. Required fields are marked.</p>
 <form id="applicationForm">
 <section class="card"><h2>Role and contact</h2><div class="grid">
-<div class="field"><label for="jobTitle">Role title *</label><input id="jobTitle" name="jobTitle" required value="Fintech role"></div>
-<div class="field"><label for="jobId">Role reference *</label><input id="jobId" name="jobId" required value="FIN-ROLE-001"></div>
+<div class="field wide"><label for="jobPicker">Select enabled role *</label><select id="jobPicker" required><option value="">Loading available roles…</option></select><input id="jobId" name="jobId" type="hidden"><input id="jobTitle" name="jobTitle" type="hidden"><small class="hint">Roles are maintained by the recruiter.</small></div>
 <div class="field"><label for="candidateName">Full name *</label><input id="candidateName" name="candidateName" autocomplete="name" required></div>
 <div class="field"><label for="candidateEmail">Email *</label><input id="candidateEmail" name="candidateEmail" type="email" autocomplete="email" required></div>
 <div class="field"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
@@ -45,7 +44,10 @@
 <div class="field"><label>Start date *</label><input data-key="startDate" type="month" required></div><div class="field"><label>End date</label><input data-key="endDate" type="month"></div>
 <div class="field wide"><label>Key responsibilities / achievements</label><textarea data-key="summary"></textarea></div></div></div></template>
 <script>
-const educationList=document.querySelector('#educationList'),experienceList=document.querySelector('#experienceList');
+const educationList=document.querySelector('#educationList'),experienceList=document.querySelector('#experienceList'),jobPicker=document.querySelector('#jobPicker');
+jobPicker.addEventListener('change',()=>{const selected=jobPicker.selectedOptions[0];document.querySelector('#jobId').value=selected?.dataset.jobId||'';document.querySelector('#jobTitle').value=selected?.dataset.jobTitle||''});
+async function loadRoles(){try{const response=await fetch('/api/jobs');const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not load roles');jobPicker.replaceChildren();const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent=(data.jobs||[]).some(role=>role.enabled)?'Choose a role…':'No enabled roles are available';jobPicker.append(placeholder);for(const role of (data.jobs||[]).filter(item=>item.enabled)){const option=document.createElement('option');option.value=role.jobId;option.textContent=role.jobTitle+' · '+role.jobId;option.dataset.jobId=role.jobId;option.dataset.jobTitle=role.jobTitle;jobPicker.append(option)}}catch(error){jobPicker.replaceChildren();const option=document.createElement('option');option.value='';option.textContent=error.message+' — is the backend running?';jobPicker.append(option)}}
+loadRoles();
 function addRecord(template,list){const fragment=document.querySelector(template).content.cloneNode(true),card=fragment.querySelector('.repeat');card.querySelector('.remove').addEventListener('click',()=>card.remove());list.append(card)}
 document.querySelector('#addEducation').addEventListener('click',()=>addRecord('#educationTemplate',educationList));
 document.querySelector('#addExperience').addEventListener('click',()=>addRecord('#experienceTemplate',experienceList));
